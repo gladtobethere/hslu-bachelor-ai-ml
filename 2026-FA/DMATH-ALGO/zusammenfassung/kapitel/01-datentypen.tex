@@ -87,6 +87,44 @@ bool(0), bool(-3)         # (False, True): nur 0 ist falsch
 \textbf{Fachlich entscheidend:} Die Einstelligkeit bzw.\ Zweistelligkeit
 beschreibt die Anzahl der Operanden, auf die ein Operator angewendet wird.
 
+\begin{center}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\linewidth}{@{}l l X l@{}}
+    \toprule
+    Symbol & Name & Beispiel & Typ \\
+    \midrule
+    \multicolumn{4}{@{}l}{\textbf{Einstellige Operatoren} (ein Operand)} \\
+    \texttt{not} & Negation (logisch) & \texttt{not False} $= T$ & boolean \\
+    $-x$ & Vorzeichenwechsel & $-(5) = -5$, \; $-(-3) = 3$ & integer, float \\
+    $\overline{A}$ & Komplement & $\overline{\{1,2\}} = \{3,4\}$ \; in $G = \{1,2,3,4\}$ & set \\
+    \midrule
+    \multicolumn{4}{@{}l}{\textbf{Zweistellige Operatoren} (zwei Operanden)} \\
+    \texttt{and} & Und & $T \text{ and } F = F$ & boolean \\
+    \texttt{or} & Oder & $F \text{ or } T = T$ & boolean \\
+    $+$ & Addition & $3 + 4 = 7$ & integer, float \\
+    $-$ & Subtraktion & $9 - 4 = 5$ & integer, float \\
+    $*$ & Multiplikation & $3 * 4 = 12$ & integer, float \\
+    \texttt{//} & Ganzzahldivision & $17 \,/\!/\, 5 = 3$ & integer \\
+    \texttt{\%} & Rest (Modulo) & $17 \,\%\, 5 = 2$ & integer \\
+    $\cap$ & Durchschnitt & $\{1,2\} \cap \{2,3\} = \{2\}$ & set \\
+    $\cup$ & Vereinigung & $\{1,2\} \cup \{2,3\} = \{1,2,3\}$ & set \\
+    $\setminus$ & Differenz & $\{1,2\} \setminus \{2,3\} = \{1\}$ & set \\
+    \midrule
+    \multicolumn{4}{@{}l}{\textbf{Zweistellige Relationen} (zwei Operanden, Ergebnis ist immer ein boolean)} \\
+    \texttt{==} & Gleichheit & \texttt{0.1 + 0.2 == 0.3} $\to F$ \; (Rundung!) & alle \\
+    $<$ & kleiner als & $2 < 5 \to T$ & integer, float \\
+    $\in$ & ist Element von & $2 \in \{1,2\} \to T$ & set \\
+    $\subset$ & ist Teilmenge von & $\{1\} \subset \{1,2\} \to T$ & set \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+
+\begin{merke}
+  Das Zeichen $-$ gibt es in beiden Varianten. Die Zahl der Operanden entscheidet:
+  In $-5$ ist es einstellig (Vorzeichen), in $9 - 4$ zweistellig (Subtraktion).
+  In $9 - (-4) = 13$ kommt es beide Male vor.
+\end{merke}
+
 \subsection*{Die drei Operatoren, als Rechnung mit 0 und 1}
 Statt die Tabelle auswendig zu lernen, kann man mit 0 und 1 \textbf{rechnen}:
 
