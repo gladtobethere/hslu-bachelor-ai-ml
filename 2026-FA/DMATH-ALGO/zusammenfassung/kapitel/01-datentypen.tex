@@ -261,6 +261,26 @@ es zwei Operatoren.
   ($10111001_2 = 185 \ne 157$). Darum immer mit den Stellenwerten zurückrechnen.
 \end{fehler}
 
+\subsection*{Randfälle bei ganzen Zahlen}
+Bei ganzen Zahlen \textbf{endet} die Division durch 2 immer, weil die Zahl bei jedem
+Schritt kleiner wird. Hier gibt es keine Periode. Prüfungsfallen sind
+Zahlen mit auffälligen Mustern:
+\begin{center}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\linewidth}{@{}l l l X@{}}
+    \toprule
+    Fall & Beispiel & binär & Warum \\
+    \midrule
+    Null & $0$ & $0$ & Die Schleife läuft nie. Das Ergebnis ist \enquote{0}, nicht leer. \\
+    Eins & $1$ & $1$ & Ein einziger Schritt: $1 : 2 = 0$ Rest 1. \\
+    Zweierpotenz $2^n$ & $64 = 2^6$ & $1\underbrace{000000}_{6}$ & Eine 1, dann $n$ Nullen (Rest 0 bis zum Schluss). \\
+    $2^n - 1$ & $63$ & $\underbrace{111111}_{6}$ & Nur Einsen ($n$ Stück), weil $64 - 1$. \\
+    $2^n + 1$ & $65$ & $1000001$ & Eine 1 vorne und hinten, dazwischen Nullen. \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\textbf{Trick:} $255 = 256 - 1 = 2^8 - 1 = 11111111_2$ sieht man sofort, ohne zu teilen.
+
 \begin{minicheck}
   \begin{enumerate}[resume*=fragen01]
     \item Berechne $29 \,/\!/\, 4$, \; $29 \,\%\, 4$, \; $-29 \,/\!/\, 4$, \; $-29 \,\%\, 4$.
@@ -331,16 +351,125 @@ Mal auf, beginnt die Periode.
     $\Rightarrow 0.\mathbf{1101}_2$ \;($\frac12 + \frac14 + \frac1{16}$)
   \end{minipage}\hfill
   \begin{minipage}[t]{0.52\linewidth}
-    $0.7 \cdot 2 = \mathbf{1}.4$ \;$\leftarrow$ Rest $0.4$\\
-    $0.4 \cdot 2 = \mathbf{0}.8$\\
-    $0.8 \cdot 2 = \mathbf{1}.6$\\
-    $0.6 \cdot 2 = \mathbf{1}.2$\\
-    $0.2 \cdot 2 = \mathbf{0}.4$ \;$\leftarrow$ Rest $0.4$ wieder da\\[2pt]
-    $\Rightarrow 0.7 = 0.1\overline{0110}_2$
+    \vspace{-8pt}
+    \begin{tikzpicture}[baseline=(m-1-1.base)]
+      \matrix (m) [rechnung] {
+        0.7 \cdot 2 \& = \& \mathbf{1} \& + \& 0.4 \\
+        0.4 \cdot 2 \& = \& \mathbf{0} \& + \& 0.8 \\
+        0.8 \cdot 2 \& = \& \mathbf{1} \& + \& 0.6 \\
+        0.6 \cdot 2 \& = \& \mathbf{1} \& + \& 0.2 \\
+        0.2 \cdot 2 \& = \& \mathbf{0} \& + \& 0.4 \& \text{\small$\leftarrow$ Start Zeile 2} \\
+      };
+      \periode{2}{5}
+    \end{tikzpicture}\\[2pt]
+    $\Rightarrow 0.7 = 0.\mathbf{1}\overline{\mathbf{0110}}_2$
   \end{minipage}\\[4pt]
   Bei einer Zahl wie $5.7$: Vorkomma- und Nachkommateil \textbf{getrennt} umrechnen,
   $5.7 = 101.1\overline{0110}_2$.
 \end{beispiel}
+
+\subsection*{Wo beginnt die Periode? So findest du sie sicher}
+\begin{enumerate}[nosep]
+  \item Untereinander rechnen. In jeder Zeile steht links der \textbf{Startwert} und rechts der \textbf{Rest}.
+  \item Nach jeder Zeile prüfen: Ist der neue Rest \textbf{gleich einem früheren Startwert}?
+  \item Wenn ja, beginnt die Periode in \textbf{der Zeile mit diesem Startwert}. Sie
+        endet in der aktuellen Zeile. Den Periodenpfeil links von der letzten zur ersten
+        Periodenzeile zeichnen.
+  \item Die Bits \textbf{vor} dem Pfeil sind die Vorperiode, die Bits \textbf{im} Pfeil
+        bekommen den Strich. Das Ergebnis hat die Form
+        $0.\text{Vorperiode}\,\overline{\text{Periode}}$.
+\end{enumerate}
+
+\begin{merke}
+  \begin{itemize}[nosep]
+    \item \textbf{Mit Brüchen rechnen, nicht mit Dezimalzahlen.} Bei $\tfrac19$ sieht man
+          $\tfrac29, \tfrac49, \ldots$ sofort wieder, bei $0.111\ldots, 0.222\ldots$ nicht.
+    \item \textbf{Es wiederholt sich garantiert.} Bei Nenner $q$ gibt es nur die Reste
+          $\tfrac0q, \tfrac1q, \ldots, \tfrac{q-1}q$. Spätestens nach $q$ Zeilen
+          muss also ein Rest wiederkommen (oder er wird 0, dann endet die Zahl).
+  \end{itemize}
+\end{merke}
+
+\subsection*{Randfälle: Perioden an verschiedenen Stellen}
+
+\begin{beispiel}{Periode beginnt sofort: $\tfrac13$}
+  \begin{tikzpicture}[baseline=(m-1-1.base)]
+    \matrix (m) [rechnung] {
+      \tfrac13 \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac23 \\
+      \tfrac23 \cdot 2 \& = \& \mathbf{1} \& + \& \tfrac13 \& \text{\small$\leftarrow$ $\tfrac13$ = Start von Zeile 1} \\
+    };
+    \periode{1}{2}
+  \end{tikzpicture}
+  \qquad $\Rightarrow \tfrac13 = 0.\overline{01}_2$ \quad (keine Vorperiode)
+\end{beispiel}
+
+\begin{beispiel}{Lange Vorperiode: $\tfrac1{12}$}
+  \begin{tikzpicture}[baseline=(m-1-1.base)]
+    \matrix (m) [rechnung] {
+      \tfrac1{12} \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac16 \\
+      \tfrac16 \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac13 \\
+      \tfrac13 \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac23 \\
+      \tfrac23 \cdot 2 \& = \& \mathbf{1} \& + \& \tfrac13 \& \text{\small$\leftarrow$ $\tfrac13$ = Start von Zeile 3} \\
+    };
+    \periode{3}{4}
+  \end{tikzpicture}
+  \qquad $\Rightarrow \tfrac1{12} = 0.\mathbf{00}\overline{\mathbf{01}}_2$\\[4pt]
+  \textbf{Falle:} Die ersten beiden Nullen sehen aus wie der Anfang der Periode, sie
+  gehören aber nicht dazu. Die 0 in Zeile 3 gehört dagegen zur Periode.
+\end{beispiel}
+
+\begin{beispiel}{Lange Periode: $\tfrac19$}
+  \begin{tikzpicture}[baseline=(m-1-1.base)]
+    \matrix (m) [rechnung] {
+      \tfrac19 \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac29 \\
+      \tfrac29 \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac49 \\
+      \tfrac49 \cdot 2 \& = \& \mathbf{0} \& + \& \tfrac89 \\
+      \tfrac89 \cdot 2 \& = \& \mathbf{1} \& + \& \tfrac79 \\
+      \tfrac79 \cdot 2 \& = \& \mathbf{1} \& + \& \tfrac59 \\
+      \tfrac59 \cdot 2 \& = \& \mathbf{1} \& + \& \tfrac19 \& \text{\small$\leftarrow$ $\tfrac19$ = Start von Zeile 1} \\
+    };
+    \periode{1}{6}
+  \end{tikzpicture}
+  \qquad $\Rightarrow \tfrac19 = 0.\overline{000111}_2$\\[4pt]
+  \textbf{Falle:} Nach drei Nullen denkt man \enquote{Periode 0} und hört auf. Darum nie
+  aufhören, bevor ein Rest \emph{wirklich} wiederkommt. Noch extremer ist
+  $\tfrac1{11} = 0.\overline{0001011101}_2$ mit einer Periode der Länge 10.
+\end{beispiel}
+
+\begin{beispiel}{Sieht lang aus, endet aber: $\tfrac5{128}$}
+  $\tfrac5{128} \to \tfrac5{64}\,(\mathbf0) \to \tfrac5{32}\,(\mathbf0) \to \tfrac5{16}\,(\mathbf0)
+   \to \tfrac58\,(\mathbf0) \to \tfrac14\,(\mathbf1) \to \tfrac12\,(\mathbf0) \to 0\,(\mathbf1)$
+  \;$\Rightarrow 0.0000101_2$\\[2pt]
+  Der Nenner $128 = 2^7$ hat nur den Faktor 2, also \textbf{muss} die Zahl enden,
+  spätestens nach 7 Stellen. Mit der Nennerregel weiss man das vor dem Rechnen.
+\end{beispiel}
+
+\subsection*{Rückwärts: periodische Binärzahl $\to$ Bruch}
+Gleicher Trick wie im Dezimalsystem, nur mit \textbf{Zweierpotenzen} statt Zehnerpotenzen.
+
+\begin{beispiel}{$x = 0.00\overline{10}_2$}
+  $\begin{array}{r@{\;=\;}l@{\qquad}l}
+    2^4 x = 16x & 10.\overline{10}_2 & \text{\small Komma 4 nach rechts: eine Periode vor dem Komma}\\
+    2^2 x = 4x & 0.\overline{10}_2 & \text{\small Komma 2 nach rechts: Periode direkt nach dem Komma}\\ \cline{1-2}
+    12x & 10_2 = 2 & \Rightarrow\; x = \frac{2}{12} = \frac16
+  \end{array}$\\[4pt]
+  \textbf{Schnellformel binär:} Nenner $= (2^{p} - 1) \cdot 2^{v}$ mit $p$ =
+  Periodenlänge und $v$ = Länge der Vorperiode. Hier ist $(4 - 1) \cdot 4 = 12$.
+  Zähler $=$ (Bits bis Ende der 1.\ Periode) $-$ (Bits vor der Periode)
+  $= 0010_2 - 00_2 = 2$.
+\end{beispiel}
+
+\begin{beispiel}{$x = 0.\overline{011}_2$ (ohne Vorperiode)}
+  $8x = 11.\overline{011}_2 = 3 + x \;\Rightarrow\; 7x = 3 \;\Rightarrow\; x = \frac37$
+  \qquad Schnellformel: $\frac{011_2}{2^3 - 1} = \frac37$.
+\end{beispiel}
+
+\begin{fehler}
+  \textbf{Die Periode aus lauter Neunen bzw.\ Einsen:} $0.\overline{9} = 1$ und
+  $0.\overline{1}_2 = 1$. Das sieht falsch aus, folgt aber direkt aus dem Trick:
+  $10x - x = 9.\overline9 - 0.\overline9 = 9$, also $x = 1$.
+  Eine Periode aus lauter 1 kommt bei der Mal-2-Methode nie heraus.
+\end{fehler}
 
 \subsection*{Fliesskommazahl nach IEEE 754}
 Die Idee ist dieselbe wie bei der wissenschaftlichen Schreibweise $6.02 \cdot 10^{23}$,
@@ -436,6 +565,9 @@ nur zur Basis 2. Jede Zahl ausser 0 lässt sich als $1.\ldots \cdot 2^k$ schreib
     \item Bestimme $(0.45)_2$.
     \item Welche Zahl ist \texttt{0 10000001 01000000000000000000000}?
     \item Gib $-2.75$ als 32-bit Fliesskommazahl an. Kontrolliere mit dem Beispiel oben.
+    \item Bestimme $(\tfrac15)_2$ und $(\tfrac1{20})_2$ untereinander und zeichne den
+          Periodenpfeil. Wo beginnt jeweils die Periode?
+    \item Schreibe $0.\overline{01}_2$ und $0.1\overline{10}_2$ als Bruch.
   \end{enumerate}
 \end{minicheck}
 
@@ -699,6 +831,15 @@ durchrechnen.
   \item $s = 0$, $k = 129 - 127 = 2$, $1.01_2 \cdot 2^2 = 101_2 = \mathbf{5}$.
   \item $2.75 = 10.11_2 = 1.011 \cdot 2^1$, $e = 128 = 10000000_2$:
         \texttt{1 10000000 01100000000000000000000}
+  \item $\tfrac15$: \; $\tfrac15 \to \tfrac25\,(\mathbf0) \to \tfrac45\,(\mathbf0) \to
+        \tfrac35\,(\mathbf1) \to \tfrac15\,(\mathbf1)$. Der Rest $\tfrac15$ ist der Start
+        von Zeile 1, also beginnt die Periode sofort: $0.\overline{0011}_2$.\\
+        $\tfrac1{20}$: \; $\tfrac1{20} \to \tfrac1{10}\,(\mathbf0) \to \tfrac15\,(\mathbf0)
+        \to$ ab hier wie oben. Die Periode beginnt in Zeile 3: $0.00\overline{0011}_2$.
+  \item $0.\overline{01}_2$: \; $4x = 1.\overline{01}_2 = 1 + x \Rightarrow 3x = 1
+        \Rightarrow x = \tfrac13$.\\
+        $0.1\overline{10}_2$: \; $8x = 110.\overline{10}_2$, \; $2x = 1.\overline{10}_2$
+        $\Rightarrow 6x = 110_2 - 1_2 = 5 \Rightarrow x = \tfrac56$.
   \item $A \cap B = \{c\}$, \; $A \cup B = \{a,b,c,d\}$, \; $A \setminus B = \{a,b\}$, \;
         $\overline{A \cup B} = \{e,f\}$.
   \item \texttt{101} $\to \{x, z\}$. Genau 2 Elemente: $\{x,y\}, \{x,z\}, \{y,z\}$, also 3.
