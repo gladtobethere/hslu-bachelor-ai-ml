@@ -120,6 +120,13 @@ Statt die Tabelle auswendig zu lernen, kann man mit 0 und 1 \textbf{rechnen}:
   \item \texttt{not}, dann \texttt{and}, dann \texttt{or}.
   \item Bei gleichen Operatoren von links nach rechts. Ein \texttt{not not $x$}
         wird von innen nach aussen gelesen: \texttt{not(not $x$)}.
+  \item \textbf{Abkürzung (doppelte Negation):} Zwei \texttt{not} direkt hintereinander
+        heben sich auf, der Operand bleibt, wie er ist: \texttt{not not $x$} $= x$.
+        Allgemein gilt: Bei einer geraden Anzahl \texttt{not} bleibt der Wert, bei einer
+        ungeraden Anzahl dreht er sich um.
+        Aber Achtung: Das gilt nur, wenn \emph{nichts} dazwischen steht. In
+        \texttt{not(not a or b)} darf man die beiden \texttt{not} \textbf{nicht} streichen,
+        weil das äussere \texttt{not} auf die ganze Klammer wirkt.
 \end{enumerate}
 
 \begin{beispiel}{Warum die Reihenfolge zählt}
