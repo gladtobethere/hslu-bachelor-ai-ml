@@ -46,6 +46,7 @@
 \definecolor{bspFarbe}{HTML}{548235}
 \definecolor{pruefFarbe}{HTML}{A50021}
 \definecolor{codeHintergrund}{HTML}{F5F5F5}
+\definecolor{fehlerFarbe}{HTML}{7F6000}
 
 % =====================================================================
 %  Boxen
@@ -53,6 +54,8 @@
 %    \begin{merke} ... \end{merke}
 %    \begin{beispiel}{Titel} ... \end{beispiel}
 %    \begin{pruefung} ... \end{pruefung}      (Prüfungstipp)
+%    \begin{fehler} ... \end{fehler}          (typischer Fehler)
+%    \begin{minicheck} ... \end{minicheck}    (Mini-Check am Abschnittsende)
 % =====================================================================
 \tcbset{
   basis/.style={enhanced, breakable, boxrule=0.6pt, arc=2pt,
@@ -67,6 +70,10 @@
   title={Beispiel: #1}}
 \newtcolorbox{pruefung}{basis, colframe=pruefFarbe, colback=pruefFarbe!4,
   title={Prüfungstipp}}
+\newtcolorbox{fehler}{basis, colframe=fehlerFarbe, colback=fehlerFarbe!5,
+  title={Typischer Fehler}}
+\newtcolorbox{minicheck}{basis, colframe=hsluBlau!60, colback=white,
+  title={Mini-Check (Lösungen am Kapitelende)}}
 
 % =====================================================================
 %  Wochenziele-Tabelle
