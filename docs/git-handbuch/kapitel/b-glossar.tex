@@ -1,0 +1,49 @@
+% ---------------------------------------------------------------------
+\chapter{Glossar}
+\label{kap:glossar}
+
+\begin{description}[style=nextline, leftmargin=1.2cm, itemsep=3pt]
+  \item[Branch \normalfont(Zweig)] eigene Arbeitslinie; technisch ein beweglicher Zeiger auf
+    einen Commit. Siehe Kapitel~\ref{kap:modell}.
+  \item[CI \normalfont(Continuous Integration)] automatische Tests und Prüfungen bei jeder
+    Änderung, auf GitHub mit \emph{GitHub Actions}.
+  \item[Clone \normalfont(Klon)] vollständige Kopie eines Repositorys inklusive Geschichte.
+  \item[Code Review] Prüfung einer Änderung durch eine zweite Person vor der Übernahme.
+  \item[Commit] gespeicherter Zwischenstand des ganzen Projekts mit Autor, Zeit, Nachricht
+    und Verweis auf den Vorgänger.
+  \item[Conventional Commits] verbreitete Konvention für Commit-Nachrichten mit Typen wie
+    \cmd{feat:} und \cmd{fix:}.
+  \item[Diff] Darstellung der Unterschiede zwischen zwei Ständen, Zeile für Zeile.
+  \item[Fetch] Commits vom Remote herunterladen, ohne die eigenen Dateien zu verändern.
+  \item[Git] verteiltes Versionsverwaltungssystem, 2005 von Linus Torvalds entwickelt.
+  \item[GitHub] Internetdienst für Git-Repositorys mit Pull Requests, Code Review und CI.
+  \item[Hash] eindeutige Kennung eines Commits aus 40 Zeichen; meist werden die ersten sieben
+    verwendet.
+  \item[HEAD] Zeiger auf den aktuell ausgecheckten Branch beziehungsweise Commit.
+  \item[Index] anderer Name für die Staging Area.
+  \item[Konflikt \normalfont(merge conflict)] dieselbe Stelle wurde auf zwei Wegen
+    unterschiedlich geändert; ein Mensch muss entscheiden.
+  \item[main] Hauptbranch mit dem gültigen Stand; früher oft \cmd{master}.
+  \item[Merge] Zusammenführen zweier Arbeitslinien.
+  \item[Merge-Commit] Commit mit zwei Vorgängern, der eine Zusammenführung festhält.
+  \item[origin] üblicher Name des Remotes, von dem geklont wurde.
+  \item[Pull] \emph{fetch} und \emph{merge} in einem Schritt.
+  \item[Pull Request \normalfont(PR)] Antrag auf GitHub, die Commits eines Branches zu
+    übernehmen; bei GitLab \emph{Merge Request}.
+  \item[Push] eigene Commits zum Remote hochladen.
+  \item[Rebase] Commits auf einen anderen Ausgangspunkt verschieben; ergibt eine geradlinige
+    Geschichte.
+  \item[Reflog] Protokoll aller Bewegungen von HEAD; Sicherheitsnetz zum Wiederfinden von
+    Commits.
+  \item[Remote] entfernte Kopie eines Repositorys, meist auf GitHub.
+  \item[Repository \normalfont(Repo)] Projekt samt vollständiger Geschichte; liegt im Ordner
+    \cmd{.git}.
+  \item[Revert] neuer Commit, der die Änderungen eines früheren Commits aufhebt.
+  \item[Squash] mehrere Commits zu einem zusammenfassen.
+  \item[Staging Area \normalfont(Vormerkung)] Zwischenablage für den nächsten Commit.
+  \item[Stash] vorübergehendes Versteck für nicht committete Änderungen.
+  \item[Token] digitaler Schlüssel, mit dem ein Programm im Namen eines Benutzers handeln darf.
+  \item[Untracked] Datei, die Git noch nie gesehen hat.
+  \item[Upstream] der mit einem lokalen Branch verknüpfte Branch auf dem Remote.
+  \item[Working Tree \normalfont(Arbeitsordner)] die sichtbaren Dateien, in denen gearbeitet wird.
+\end{description}

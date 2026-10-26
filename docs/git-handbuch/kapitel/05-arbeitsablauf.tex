@@ -1,0 +1,152 @@
+% ---------------------------------------------------------------------
+\chapter{Der Arbeitsablauf}
+\label{kap:ablauf}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item den Feature-Branch-Workflow kennen, wie ihn die meisten Teams verwenden,
+  \item verstehen, \emph{warum} nie direkt auf \cmd{main} gearbeitet wird,
+  \item einen vollständigen Arbeitszyklus von Anfang bis Ende durchführen können.
+\end{itemize}
+\end{lernziele}
+
+\section{Warum nicht einfach auf main arbeiten?}
+
+Technisch kann man auf \cmd{main} committen und direkt pushen. Für ein Wegwerfprojekt geht
+das. In der Industrie ist es dagegen fast überall verboten, und zwar aus drei Gründen:
+
+\begin{enumerate}
+  \item \textbf{main muss immer funktionieren.} Aus \cmd{main} wird die Software gebaut,
+        die Kundinnen und Kunden verwenden. Ein halbfertiger Zwischenstand darf dort nie landen.
+  \item \textbf{Vier-Augen-Prinzip.} Jede Änderung wird vor der Übernahme von einer zweiten
+        Person geprüft. Das findet Fehler, verbreitet Wissen im Team und verhindert, dass
+        jemand allein unbemerkt etwas Falsches einbaut.
+  \item \textbf{Automatische Prüfung.} Vor der Übernahme laufen automatisch Tests. Schlägt
+        einer fehl, wird die Änderung nicht übernommen.
+\end{enumerate}
+
+Diese Prüfungen brauchen einen Ort, an dem die Änderung \emph{wartet}, bevor sie in
+\cmd{main} kommt: den eigenen Branch und den Pull Request.
+
+\begin{praxis}
+Auf GitHub lässt sich \cmd{main} technisch sperren (\emph{branch protection}). Ein direkter
+Push wird dann abgewiesen, und eine Übernahme ist nur über einen Pull Request mit
+Freigabe und grünen Tests möglich. In professionellen Teams ist das die Regel. Wer sich
+den Ablauf schon bei eigenen Projekten angewöhnt, arbeitet vom ersten Tag an wie im Team.
+\end{praxis}
+
+\section{Der Feature-Branch-Workflow}
+
+Der verbreitetste Ablauf heisst \begriff{Feature-Branch-Workflow}: Jede Aufgabe, ob neue
+Funktion, Fehlerbehebung oder Übung, erhält einen eigenen kurzlebigen Branch.
+
+\begin{center}
+\begin{tikzpicture}[
+    schritt/.style={draw=hsluBlau, fill=hsluBlau!6, rounded corners=3pt, thick,
+                    minimum width=2.45cm, minimum height=1.05cm, align=center, font=\small},
+    weg/.style={-{Stealth[length=2.2mm]}, thick}
+  ]
+  \node[schritt] (s1) at (0,0)    {aktuellen\\Stand holen};
+  \node[schritt] (s2) at (3.0,0)  {Branch\\anlegen};
+  \node[schritt] (s3) at (6.0,0)  {arbeiten,\\committen};
+  \node[schritt] (s4) at (9.0,0)  {pushen};
+  \node[schritt] (s5) at (9.0,-1.8) {Pull Request\\öffnen};
+  \node[schritt] (s6) at (6.0,-1.8) {prüfen,\\testen};
+  \node[schritt] (s7) at (3.0,-1.8) {in main\\übernehmen};
+  \node[schritt] (s8) at (0,-1.8)  {Branch\\löschen};
+  \draw[weg] (s1) -- (s2);  \draw[weg] (s2) -- (s3);  \draw[weg] (s3) -- (s4);
+  \draw[weg] (s4) -- (s5);  \draw[weg] (s5) -- (s6);  \draw[weg] (s6) -- (s7);
+  \draw[weg] (s7) -- (s8);  \draw[weg, dashed, gray] (s8) -- (s1);
+\end{tikzpicture}
+\end{center}
+
+\section{Ein vollständiger Arbeitszyklus}
+
+Das folgende Beispiel zeigt einen Abend, an dem eine Übung im Modul ADS gelöst wird. Jeder
+Befehl wird in Kapitel~\ref{kap:befehle} im Detail erklärt.
+
+\subsection*{1. Aktuellen Stand holen}
+
+\begin{lstlisting}[style=befehle]
+git switch main
+git pull
+\end{lstlisting}
+
+Wer auf einem veralteten Stand beginnt, riskiert später Konflikte mit Änderungen, die in
+der Zwischenzeit entstanden sind, zum Beispiel auf einem anderen Gerät.
+
+\subsection*{2. Branch anlegen}
+
+\begin{lstlisting}[style=befehle]
+git switch -c ads
+\end{lstlisting}
+
+Ab jetzt landen alle Commits auf \cmd{ads}. \cmd{main} bleibt unberührt.
+
+\subsection*{3. Arbeiten und committen}
+
+Dateien bearbeiten, speichern, dann:
+
+\begin{lstlisting}[style=befehle]
+git status                             # was hat sich geändert?
+git add python                         # Änderungen auswählen
+git diff --cached --stat               # Auswahl kontrollieren
+git commit -m "ADS U02: Stack mit verketteter Liste implementiert"
+\end{lstlisting}
+
+Dieser Schritt darf sich mehrmals wiederholen. Mehrere kleine Commits sind besser als ein
+grosser (siehe Kapitel~\ref{kap:commits}).
+
+\subsection*{4. Pushen}
+
+\begin{lstlisting}[style=befehle]
+git push -u origin ads
+\end{lstlisting}
+
+Jetzt liegt die Arbeit auch auf GitHub und ist gegen den Ausfall des eigenen Computers gesichert.
+
+\subsection*{5. Pull Request öffnen, prüfen, übernehmen}
+
+\begin{lstlisting}[style=befehle]
+gh pr create --fill
+gh pr merge --merge --delete-branch
+\end{lstlisting}
+
+Im Team würde zwischen diesen beiden Befehlen eine Kollegin den Pull Request prüfen und
+freigeben. Bei eigenen Projekten übernimmt man diese Rolle selbst und schaut sich die
+Änderungen auf GitHub noch einmal in Ruhe an.
+
+\subsection*{6. Abschliessen}
+
+\begin{lstlisting}[style=befehle]
+git pull
+\end{lstlisting}
+
+\cmd{gh pr merge --delete-branch} hat bereits auf \cmd{main} zurückgewechselt. \cmd{git pull}
+holt den neuen Stand von \cmd{main}, der jetzt die eigene Arbeit enthält. Der Kreis ist
+geschlossen.
+
+\begin{erfahrung}
+\textbf{Merkhilfe für das Ende:} \emph{push} (hochladen) $\rightarrow$ \emph{create}
+(Antrag stellen) $\rightarrow$ \emph{merge} (Antrag annehmen) $\rightarrow$ \emph{pull}
+(Ergebnis holen). Wer \emph{create} vergisst, erhält beim Mergen die Meldung
+„no pull requests found“: Ohne Antrag gibt es nichts anzunehmen.
+\end{erfahrung}
+
+\section{Branch-Namen}
+
+In Teams folgen Branch-Namen oft einem Schema, damit man auf einen Blick sieht, worum es
+geht, zum Beispiel \cmd{feature/login}, \cmd{fix/absturz-beim-speichern} oder
+\cmd{JIRA-1234-export}. Für eigene Projekte genügt ein kurzes Wort ohne Leerzeichen und
+Umlaute: \cmd{ads}, \cmd{lial}, \cmd{latex}. Da der Branch nach dem Merge gelöscht wird,
+kann derselbe Name immer wieder verwendet werden.
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item \cmd{main} enthält immer einen funktionierenden Stand und wird nie direkt bearbeitet.
+  \item Jede Aufgabe erhält einen eigenen Branch, der per Pull Request übernommen wird.
+  \item Zyklus: \cmd{pull} $\rightarrow$ \cmd{switch -c} $\rightarrow$ \cmd{add}/\cmd{commit}
+        $\rightarrow$ \cmd{push} $\rightarrow$ \cmd{pr create} $\rightarrow$ \cmd{pr merge}
+        $\rightarrow$ \cmd{pull}.
+\end{itemize}
+\end{zusammenfassung}

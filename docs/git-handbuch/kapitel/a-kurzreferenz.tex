@@ -1,0 +1,64 @@
+% ---------------------------------------------------------------------
+\chapter{Kurzreferenz}
+\label{kap:kurzreferenz}
+
+\section*{Täglicher Ablauf}
+
+\begin{lstlisting}[style=befehle]
+git switch main                       # 1. aufs Original wechseln
+git pull                              #    und aktuellen Stand holen
+git switch -c <name>                  # 2. Branch anlegen
+git status                            # 3. Lage prüfen
+git add <pfad>                        # 4. vormerken
+git diff --cached --stat              # 5. Auswahl kontrollieren
+git commit -m "<Bereich>: <was>"      # 6. Commit
+git push -u origin <name>             # 7. hochladen
+gh pr create --fill                   # 8. Pull Request
+gh pr merge --merge --delete-branch   # 9. übernehmen
+git pull                              # 10. Stand holen
+\end{lstlisting}
+
+\section*{Nach Aufgabe}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash\ttfamily}p{8.0cm}@{}}
+  \toprule
+  \textbf{Ich will \ldots} & \normalfont\textbf{Befehl} \\
+  \midrule
+  \multicolumn{2}{@{}l}{\textit{Lage prüfen}} \\
+  sehen, wo ich stehe                 & git status \quad\textrm{oder}\quad git status -sb \\
+  Vormerkung prüfen                   & git diff --cached --stat \\
+  Änderungen im Detail sehen          & git diff \quad\textrm{bzw.}\quad git diff --cached \\
+  Geschichte ansehen                  & git log --oneline --graph --all -10 \\
+  Branches auflisten                  & git branch -a \\
+  \midrule
+  \multicolumn{2}{@{}l}{\textit{Speichern und teilen}} \\
+  vormerken                           & git add <pfad> \\
+  Commit machen                       & git commit -m "Nachricht" \\
+  Branch anlegen                      & git switch -c <name> \\
+  hochladen, erstes Mal               & git push -u origin <name> \\
+  hochladen, danach                   & git push \\
+  Pull Request erstellen              & gh pr create --fill \\
+  Pull Request übernehmen             & gh pr merge --merge --delete-branch \\
+  \midrule
+  \multicolumn{2}{@{}l}{\textit{Holen}} \\
+  neuesten Stand holen                & git pull \\
+  nur nachsehen, ob es Neues gibt     & git fetch \newline git status \\
+  \midrule
+  \multicolumn{2}{@{}l}{\textit{Korrigieren}} \\
+  aus Vormerkung nehmen               & git restore --staged <datei> \\
+  Änderungen verwerfen (endgültig)    & git restore <datei> \\
+  letzten Commit ändern (nicht gepusht) & git commit --amend \\
+  gepushten Commit aufheben           & git revert <hash> \\
+  Arbeit parken                       & git stash \newline git stash pop \\
+  verlorenen Commit finden            & git reflog \\
+  \midrule
+  \multicolumn{2}{@{}l}{\textit{Einrichten}} \\
+  Identität setzen                    & git config --global user.name "Name" \newline git config --global user.email "mail" \\
+  bei GitHub anmelden                 & gh auth login --hostname github.com \newline \hspace*{1em}--git-protocol https --web \\
+  Repository klonen                   & gh repo clone <besitzer>/<repo> \\
+  Hilfe                               & git <befehl> -h \quad\textrm{oder}\quad git help <befehl> \\
+  \bottomrule
+\end{tabularx}
+\end{center}

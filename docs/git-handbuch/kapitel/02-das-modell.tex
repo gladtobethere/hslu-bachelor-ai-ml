@@ -1,0 +1,199 @@
+% ---------------------------------------------------------------------
+\chapter{Wie Git denkt: das mentale Modell}
+\label{kap:modell}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item die vier Orte kennen, zwischen denen Änderungen wandern,
+  \item verstehen, was ein Commit technisch ist,
+  \item wissen, was Branches, HEAD und Remotes sind,
+  \item jeden Git-Befehl einem Weg zwischen den vier Orten zuordnen können.
+\end{itemize}
+\end{lernziele}
+
+Die meisten Schwierigkeiten mit Git entstehen nicht durch vergessene Befehle, sondern durch
+ein unklares Bild davon, \emph{wo} sich eine Änderung gerade befindet. Dieses Kapitel
+vermittelt dieses Bild. Es ist das wichtigste Kapitel des Handbuchs.
+
+\section{Die vier Orte}
+
+Eine Änderung durchläuft auf ihrem Weg zu GitHub vier Orte. Jeder Git-Befehl bewegt
+Änderungen von einem Ort zum nächsten oder zeigt an, was wo liegt.
+
+\begin{center}
+\begin{tikzpicture}[
+    ort/.style={draw=hsluBlau, fill=hsluBlau!6, rounded corners=3pt, thick,
+                minimum width=3.0cm, minimum height=1.5cm, align=center, font=\small},
+    weg/.style={-{Stealth[length=2.5mm]}, thick},
+    lab/.style={font=\ttfamily\footnotesize, fill=white, inner sep=1pt}
+  ]
+  \node[ort] (arbeit) at (0,0)    {\textbf{Arbeitsordner}\\deine Dateien};
+  \node[ort] (vor)    at (3.9,0)  {\textbf{Staging Area}\\Vormerkung};
+  \node[ort] (repo)   at (7.8,0)  {\textbf{lokales Repo}\\Geschichte auf\\deinem PC};
+  \node[ort] (gh)     at (11.7,0) {\textbf{Remote}\\GitHub};
+
+  \draw[weg] ([yshift=4mm]arbeit.east) -- node[lab, above=1mm] {add}     ([yshift=4mm]vor.west);
+  \draw[weg] ([yshift=-4mm]vor.west)   -- node[lab, below=1mm] {restore} ([yshift=-4mm]arbeit.east);
+  \draw[weg] (vor.east)                -- node[lab, above=1mm] {commit}  (repo.west);
+  \draw[weg] ([yshift=4mm]repo.east)   -- node[lab, above=1mm] {push}    ([yshift=4mm]gh.west);
+  \draw[weg] ([yshift=-4mm]gh.west)    -- node[lab, below=1mm] {pull}    ([yshift=-4mm]repo.east);
+\end{tikzpicture}
+\end{center}
+
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[1. Arbeitsordner \normalfont(\emph{working tree})]
+    Die Dateien, die im Explorer und im Editor sichtbar sind. Hier wird gearbeitet. Git
+    beobachtet diesen Ordner, verändert aber nichts von sich aus.
+  \item[2. Staging Area \normalfont(Vormerkung, auch \emph{index})]
+    Eine Zwischenablage für den nächsten Zwischenstand. Man legt dort gezielt die
+    Änderungen ab, die zusammengehören.
+  \item[3. Lokales Repository \normalfont(\emph{repository}, kurz \emph{Repo})]
+    Die gespeicherte Geschichte des Projekts. Sie liegt im versteckten Ordner \cmd{.git}
+    innerhalb des Projektordners. Wer diesen Ordner löscht, löscht die Geschichte.
+  \item[4. Remote \normalfont(entfernte Kopie)]
+    Eine Kopie des Repositorys auf einem anderen Rechner, meist auf GitHub. Sie dient als
+    Sicherung und als gemeinsamer Treffpunkt für alle Beteiligten.
+\end{description}
+
+\subsection*{Warum gibt es die Staging Area?}
+
+Die Staging Area irritiert Einsteiger am meisten: Warum nicht direkt speichern? Der Grund
+ist, dass bei der Arbeit oft mehrere Dinge gleichzeitig entstehen. Angenommen, an einem
+Abend wurde eine Übungsaufgabe gelöst \emph{und} nebenbei ein Tippfehler in der
+Dokumentation korrigiert. Das sind zwei verschiedene Anliegen. Mit der Staging Area lassen
+sie sich als zwei getrennte, sauber beschriebene Zwischenstände festhalten.
+
+Ein Vergleich: Die Staging Area ist wie ein Einkaufskorb. Man legt hinein, was zusammengehört,
+und erst an der Kasse, beim \emph{Commit}, wird verbucht.
+
+\section{Der Commit: ein Foto des Projekts}
+
+\begin{definition}{Commit}
+Ein \begriff{Commit} ist ein gespeicherter Zwischenstand des gesamten Projekts. Er enthält
+\begin{itemize}[nosep]
+  \item den Inhalt aller Dateien zu diesem Zeitpunkt,
+  \item Autor und Zeitpunkt,
+  \item eine Beschreibung, die \emph{Commit-Nachricht},
+  \item einen Verweis auf den vorherigen Commit.
+\end{itemize}
+\end{definition}
+
+Ein Commit ist also kein „Änderungsprotokoll“, sondern ein vollständiges \textbf{Foto} des
+Projekts. Weil jeder Commit auf seinen Vorgänger verweist, entsteht eine Kette, die
+\begriff{Geschichte} (\emph{history}):
+
+\begin{center}
+\begin{tikzpicture}[
+    commit/.style={circle, draw=hsluBlau, fill=hsluBlau!10, thick, minimum size=9mm,
+                   font=\ttfamily\scriptsize},
+    vor/.style={-{Stealth[length=2mm]}, thick, gray}
+  ]
+  \node[commit] (c1) at (0,0)   {98bc};
+  \node[commit] (c2) at (2.2,0) {19ce};
+  \node[commit] (c3) at (4.4,0) {3b1a};
+  \node[commit] (c4) at (6.6,0) {7f02};
+  \draw[vor] (c2) -- (c1);
+  \draw[vor] (c3) -- (c2);
+  \draw[vor] (c4) -- (c3);
+  \node[font=\small, below=2mm of c1] {ältester};
+  \node[font=\small, below=2mm of c4] {neuester};
+\end{tikzpicture}
+\end{center}
+
+Die Pfeile zeigen rückwärts: Jeder Commit kennt seinen Vorgänger, nicht seinen Nachfolger.
+
+\subsection*{Der Hash: die Adresse eines Commits}
+
+Jeder Commit erhält eine eindeutige Kennung, den \begriff{Hash}, zum Beispiel
+\cmd{3b1a03a5c2e0...}. Er besteht aus 40 Zeichen. Im Alltag genügen die ersten sieben, etwa
+\cmd{3b1a03a}. Mit dem Hash lässt sich jeder Commit genau ansprechen, zum Beispiel um ihn
+anzuzeigen oder rückgängig zu machen.
+
+\begin{hintergrund}
+Der Hash wird aus dem Inhalt des Commits berechnet, also aus Dateien, Autor, Zeitpunkt,
+Nachricht \emph{und dem Hash des Vorgängers}. Ändert sich auch nur ein Zeichen irgendwo in
+der Geschichte, ändern sich alle nachfolgenden Hashes. Darum ist die Geschichte in Git
+praktisch fälschungssicher, und darum lassen sich bereits geteilte Commits nicht einfach
+„umschreiben“, ohne dass alle anderen es merken (siehe Kapitel~\ref{kap:fehler}).
+\end{hintergrund}
+
+\section{Branches: parallele Arbeitslinien}
+
+\begin{definition}{Branch}
+Ein \begriff{Branch} (deutsch: Zweig) ist eine eigene Arbeitslinie in der Geschichte.
+Technisch ist er nur ein beweglicher Zeiger auf einen Commit. Mit jedem neuen Commit rückt
+der Zeiger des aktuellen Branches automatisch nach vorn.
+\end{definition}
+
+Jedes Repository hat einen Hauptbranch, heute meist \cmd{main} genannt (früher
+\cmd{master}). Er enthält den gültigen, funktionierenden Stand. Neue Arbeit geschieht auf
+einem eigenen Branch, der von \cmd{main} abzweigt:
+
+\begin{center}
+\begin{tikzpicture}[
+    commit/.style={circle, draw=hsluBlau, fill=hsluBlau!10, thick, minimum size=7mm},
+    neu/.style={circle, draw=bspFarbe, fill=bspFarbe!15, thick, minimum size=7mm},
+    vor/.style={-{Stealth[length=2mm]}, thick, gray},
+    zeiger/.style={rounded corners=2pt, font=\ttfamily\small, inner sep=3pt, text=white}
+  ]
+  \node[commit] (c1) at (0,0) {};
+  \node[commit] (c2) at (1.8,0) {};
+  \node[commit] (c3) at (3.6,0) {};
+  \node[neu]    (d1) at (5.4,1.2) {};
+  \node[neu]    (d2) at (7.2,1.2) {};
+  \draw[vor] (c2) -- (c1);
+  \draw[vor] (c3) -- (c2);
+  \draw[vor] (d1) -- (c3);
+  \draw[vor] (d2) -- (d1);
+  \node[zeiger, fill=hsluBlau, below=4mm of c3] (m) {main};
+  \draw[-{Stealth}, hsluBlau, thick] (m) -- (c3);
+  \node[zeiger, fill=bspFarbe, above=4mm of d2] (a) {ads};
+  \draw[-{Stealth}, bspFarbe, thick] (a) -- (d2);
+  \node[font=\small\ttfamily, right=3mm of a, text=gray] (h) {HEAD};
+  \draw[-{Stealth}, gray, thick] (h) -- (a);
+\end{tikzpicture}
+\end{center}
+
+Hier zeigt \cmd{main} weiterhin auf den letzten gültigen Stand. Auf dem Branch \cmd{ads}
+sind zwei neue Commits entstanden. \cmd{main} bleibt davon unberührt, bis die Arbeit
+geprüft und übernommen wird. Dieses Übernehmen heisst \begriff{Merge} (zusammenführen).
+
+\begin{definition}{HEAD}
+\begriff{HEAD} ist der Zeiger auf „hier stehe ich gerade“. Er zeigt auf den aktuellen
+Branch. Wechselt man den Branch, wandert HEAD mit, und Git passt die Dateien im
+Arbeitsordner an den Stand dieses Branches an.
+\end{definition}
+
+\begin{praxis}
+Weil ein Branch nur ein Zeiger ist, kostet er praktisch nichts: Anlegen, Wechseln und
+Löschen dauert Sekundenbruchteile. Darum arbeiten Teams mit sehr vielen kurzlebigen
+Branches, typischerweise einem pro Aufgabe oder Fehlerbehebung. Ein Branch lebt oft nur
+wenige Stunden oder Tage, bis er in \cmd{main} übernommen und wieder gelöscht wird.
+\end{praxis}
+
+\section{Remotes: die Kopie im Internet}
+
+Ein \begriff{Remote} ist ein anderes Repository, mit dem das eigene synchronisiert wird.
+Beim Klonen von GitHub erhält es automatisch den Namen \cmd{origin} (Ursprung). Mit zwei
+Befehlen wird abgeglichen:
+
+\begin{itemize}
+  \item \cmd{git push} schickt eigene Commits zum Remote.
+  \item \cmd{git pull} holt fremde Commits vom Remote.
+\end{itemize}
+
+Git merkt sich zusätzlich, auf welchem Stand das Remote beim letzten Abgleich war. Dieser
+gespeicherte Stand heisst zum Beispiel \cmd{origin/main}. Daher stammen Meldungen wie
+\emph{„Your branch is ahead of \textquotesingle{}origin/main\textquotesingle{} by 1 commit“}:
+Der eigene \cmd{main} hat einen Commit mehr als der zuletzt bekannte Stand auf GitHub.
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Änderungen wandern: Arbeitsordner $\rightarrow$ Staging Area $\rightarrow$
+        lokales Repo $\rightarrow$ Remote.
+  \item Ein Commit ist ein vollständiges Foto des Projekts mit Autor, Zeit, Nachricht und
+        Verweis auf den Vorgänger. Seine Adresse ist der Hash.
+  \item Ein Branch ist ein beweglicher Zeiger auf einen Commit. \cmd{main} ist der gültige Stand.
+  \item HEAD zeigt, wo man gerade steht. \cmd{origin} ist die Kopie auf GitHub.
+\end{itemize}
+\end{zusammenfassung}

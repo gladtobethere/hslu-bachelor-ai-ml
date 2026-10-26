@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# LaTeX: Hilfsdateien und Ausgabe (PDF entsteht beim Kompilieren neu)
+build/
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Editor und Werkzeuge
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+desktop.ini

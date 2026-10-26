@@ -1,0 +1,62 @@
+% ---------------------------------------------------------------------
+\addchap{Vorwort}
+
+Fast jede Software, die heute entsteht, wird mit \emph{Git} verwaltet: das Betriebssystem
+auf dem Smartphone ebenso wie die App einer Bank oder das Analyseskript einer
+Forschungsgruppe. Wer in der Informatik, in Data Science oder im Machine Learning arbeitet,
+kommt daran nicht vorbei. In Stelleninseraten wird Git meist gar nicht mehr erwähnt, weil
+es schlicht vorausgesetzt wird.
+
+Dieses Handbuch richtet sich an Menschen, die Git \textbf{verstehen} wollen, nicht nur
+bedienen. Es setzt keine Vorkenntnisse in Software-Entwicklung voraus. Jeder Fachbegriff
+wird beim ersten Auftreten erklärt, und am Ende steht ein Glossar mit den deutschen und
+englischen Bezeichnungen.
+
+\section*{Aufbau}
+
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[Teil I: Grundlagen] erklärt, welches Problem Versionsverwaltung löst und wie Git
+    intern denkt. Dieses \emph{mentale Modell} ist der Schlüssel: Wer es verstanden hat,
+    kann sich fast jeden Befehl selbst herleiten.
+  \item[Teil II: Arbeiten mit Git] führt durch Einrichtung, täglichen Arbeitsablauf und die
+    wichtigsten Befehle, jeweils mit Zweck, Aufbau und Beispiel.
+  \item[Teil III: Praxis] zeigt, wie in der Software-Industrie tatsächlich gearbeitet wird:
+    gute Commits, Zusammenarbeit, Konflikte, Fehlerbehebung und Sicherheit.
+  \item[Anhang] enthält eine Kurzreferenz zum Nachschlagen und das Glossar.
+\end{description}
+
+\section*{Konventionen}
+
+\begin{itemize}
+  \item Befehle und Dateinamen stehen in \cmd{Schreibmaschinenschrift}.
+  \item Befehle, die im Terminal eingegeben werden, stehen in grauen Kästen.
+        Alles nach \texttt{\#} ist ein Kommentar und wird nicht mit eingegeben:
+\begin{lstlisting}[style=befehle]
+git status                  # zeigt den aktuellen Zustand
+\end{lstlisting}
+  \item Ausgaben des Terminals sind mit einem grauen Balken am Rand markiert:
+\begin{lstlisting}[style=ausgabe]
+On branch main
+nothing to commit, working tree clean
+\end{lstlisting}
+  \item Platzhalter, die durch eigene Werte ersetzt werden, stehen in spitzen Klammern:
+        \cmd{git switch -c <name>} wird zu \cmd{git switch -c ads}.
+\end{itemize}
+
+Die farbigen Kästen haben feste Bedeutungen:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Kasten} & \textbf{Inhalt} \\
+  \midrule
+  {\color{hsluBlau}\textbf{Lernziele / Zusammenfassung}} & was das Kapitel vermittelt \\
+  {\color{defFarbe}\textbf{Definition}}                 & präzise Erklärung eines Fachbegriffs \\
+  {\color{bspFarbe}\textbf{Aus der Praxis}}             & wie Teams in Unternehmen arbeiten und warum \\
+  {\color{gray!65!black}\textbf{Hintergrund}}           & technische Vertiefung, beim ersten Lesen überspringbar \\
+  {\color{merkFarbe}\textbf{Erfahrungswert}}            & was man meist erst nach Jahren lernt \\
+  {\color{pruefFarbe}\textbf{Typischer Fehler / Achtung}} & häufige Stolpersteine und Gefahren \\
+  \bottomrule
+\end{tabularx}
+\end{center}

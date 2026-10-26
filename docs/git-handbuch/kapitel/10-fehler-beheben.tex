@@ -1,0 +1,106 @@
+% ---------------------------------------------------------------------
+\chapter{Fehler beheben}
+\label{kap:fehler}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item für jede typische Panne den passenden Befehl finden,
+  \item verstehen, warum „schon gepusht?“ die entscheidende Frage ist,
+  \item wissen, welche Befehle gefährlich sind und welche ein Sicherheitsnetz bieten.
+\end{itemize}
+\end{lernziele}
+
+\section{Die entscheidende Frage: schon gepusht?}
+
+Solange ein Commit nur lokal existiert, gehört er niemandem sonst. Man darf ihn ändern oder
+ersetzen. Sobald er gepusht ist, haben andere ihn womöglich schon geholt und darauf
+aufgebaut. Ein nachträgliches Ändern würde deren Geschichte widersprechen (siehe Hintergrund
+zum Hash in Kapitel~\ref{kap:modell}). Daraus folgt die Grundregel:
+
+\begin{merke}
+\textbf{Lokal:} Commits dürfen korrigiert und ersetzt werden.\\
+\textbf{Gepusht:} Commits werden nicht mehr verändert, sondern durch \emph{neue} Commits korrigiert.
+\end{merke}
+
+\section{Pannen und ihre Lösung}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash\ttfamily}p{5.3cm}>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Situation} & \normalfont\textbf{Befehl} & \textbf{Wirkung} \\
+  \midrule
+  falsche Datei vorgemerkt & git restore --staged <datei> & aus der Staging Area nehmen, Datei unverändert \\
+  Änderungen an einer Datei verwerfen & git restore <datei> & zurück auf den letzten Commit, \textbf{endgültig} \\
+  versehentlich auf \cmd{main} gearbeitet, noch nicht committet & git switch -c <name> & Änderungen wandern auf den neuen Branch \\
+  Commit-Nachricht falsch, \textbf{nicht gepusht} & git commit --amend -m "neu" & ersetzt den letzten Commit \\
+  Datei im Commit vergessen, \textbf{nicht gepusht} & git add <datei> \newline git commit --amend --no-edit & fügt sie dem letzten Commit hinzu; \cmd{--no-edit} behält die Nachricht \\
+  fehlerhafter Commit, \textbf{bereits gepusht} & git revert <hash> & neuer Commit, der die Änderungen des alten aufhebt \\
+  Arbeit kurz beiseitelegen & git stash \newline git stash pop & parkt und holt Änderungen zurück \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection*{\texorpdfstring{\cmd{--amend}}{--amend} und \texorpdfstring{\cmd{revert}}{revert} im Vergleich}
+
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[\cmd{git commit --amend}] erzeugt einen neuen Commit, der den letzten
+    \emph{ersetzt}. Der alte verschwindet aus der Geschichte. Das ist nur sicher, solange
+    niemand den alten Commit kennt, also vor dem Push.
+  \item[\cmd{git revert <hash>}] erzeugt einen \emph{zusätzlichen} Commit, der genau das
+    Gegenteil des angegebenen Commits enthält. Die Geschichte bleibt vollständig und
+    ehrlich: Man sieht den Fehler und seine Korrektur. Darum ist das der Weg für
+    bereits geteilte Commits.
+\end{description}
+
+\begin{praxis}
+Wenn in einer Firma eine fehlerhafte Änderung live gegangen ist, wird sie mit einem
+\cmd{revert} zurückgenommen. Das geht schnell, ist nachvollziehbar und durchläuft denselben
+Prüfprozess wie jede andere Änderung. Erst danach sucht man in Ruhe nach der eigentlichen
+Ursache.
+\end{praxis}
+
+\section{Das Sicherheitsnetz: \texorpdfstring{\cmd{git reflog}}{git reflog}}
+
+Git protokolliert jede Bewegung von HEAD, also jeden Commit, jeden Branch-Wechsel und jedes
+Zurücksetzen. Dieses Protokoll heisst \begriff{Reflog} und lässt sich mit
+\cmd{git reflog} anzeigen:
+
+\begin{lstlisting}[style=ausgabe]
+3b1a03a HEAD@{0}: pull: Fast-forward
+db753be HEAD@{1}: commit: ADS: Uebungen U01-U06
+19ce440 HEAD@{2}: clone: from https://github.com/...
+\end{lstlisting}
+
+Selbst ein scheinbar verlorener Commit ist darin meist noch zu finden. Mit seinem Hash lässt
+er sich zurückholen, zum Beispiel mit \cmd{git switch -c rettung <hash>}.
+
+\begin{erfahrung}
+In Git geht erstaunlich wenig wirklich verloren, solange es einmal committet war. Nicht
+committete Änderungen sind dagegen ungeschützt. Darum lieber einmal zu oft committen,
+zum Beispiel als Zwischenstand auf dem eigenen Branch.
+\end{erfahrung}
+
+\section{Gefährliche Befehle}
+
+\begin{achtung}
+Zwei Befehle können tatsächlich Arbeit vernichten:
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[\cmd{git reset --hard}] setzt Arbeitsordner und Staging Area hart auf einen
+    früheren Stand zurück. Nicht committete Änderungen sind danach unwiederbringlich verloren.
+  \item[\cmd{git push --force}] überschreibt die Geschichte auf GitHub mit der eigenen. Was
+    andere inzwischen gepusht haben, verschwindet dort.
+\end{description}
+Beide nur verwenden, wenn man genau weiss, was sie bewirken. In Teams ist \cmd{--force}
+auf \cmd{main} durch Branch-Schutz meist technisch gesperrt.
+\end{achtung}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Vor dem Push darf korrigiert werden (\cmd{--amend}), danach wird mit neuen Commits korrigiert (\cmd{revert}).
+  \item \cmd{git restore --staged} ist harmlos, \cmd{git restore} ohne Option verwirft endgültig.
+  \item \cmd{git reflog} findet fast jeden committeten Stand wieder.
+  \item \cmd{reset --hard} und \cmd{push --force} nur mit vollem Verständnis.
+\end{itemize}
+\end{zusammenfassung}

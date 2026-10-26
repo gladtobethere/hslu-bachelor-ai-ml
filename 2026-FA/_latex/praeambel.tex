@@ -1,0 +1,119 @@
+% =====================================================================
+%  Gemeinsame Präambel für alle Zusammenfassungen und Spickzettel
+%  Einbinden mit:  \input{../../_latex/praeambel}
+% =====================================================================
+
+% --- Sprache und Schrift ---------------------------------------------
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+% In Schreibmaschinenschrift keine Ligaturen: "--" bleibt zwei Striche, "<<" bleibt "<<"
+\DisableLigatures{encoding = *, family = tt*}
+\usepackage{csquotes}
+
+% --- Seitenlayout (Ränder im Hauptdokument mit \geometry{} anpassen) --
+\usepackage[a4paper]{geometry}
+
+% --- Mathematik ------------------------------------------------------
+\usepackage{amsmath, amssymb, mathtools}
+
+% --- Tabellen und Listen ---------------------------------------------
+\usepackage{array, booktabs, tabularx}
+\usepackage{enumitem}
+
+% --- Farben, Boxen, Grafiken -----------------------------------------
+\usepackage[table]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{graphicx}
+\graphicspath{{bilder/}}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc}
+\usepackage{forest}            % Bäume zeichnen (BST, Heap, AVL)
+
+% --- Programmcode ----------------------------------------------------
+\usepackage{listings}
+
+% --- Links (immer zuletzt laden) -------------------------------------
+\usepackage[hidelinks]{hyperref}
+
+% =====================================================================
+%  Farben
+% =====================================================================
+\definecolor{hsluBlau}{HTML}{1F4E79}
+\definecolor{defFarbe}{HTML}{1F4E79}
+\definecolor{merkFarbe}{HTML}{C55A11}
+\definecolor{bspFarbe}{HTML}{548235}
+\definecolor{pruefFarbe}{HTML}{A50021}
+\definecolor{codeHintergrund}{HTML}{F5F5F5}
+
+% =====================================================================
+%  Boxen
+%    \begin{definition}{Titel} ... \end{definition}
+%    \begin{merke} ... \end{merke}
+%    \begin{beispiel}{Titel} ... \end{beispiel}
+%    \begin{pruefung} ... \end{pruefung}      (Prüfungstipp)
+% =====================================================================
+\tcbset{
+  basis/.style={enhanced, breakable, boxrule=0.6pt, arc=2pt,
+                left=6pt, right=6pt, top=4pt, bottom=4pt,
+                fonttitle=\bfseries, before skip=8pt, after skip=8pt}
+}
+\newtcolorbox{definition}[1]{basis, colframe=defFarbe, colback=defFarbe!4,
+  title={Definition: #1}}
+\newtcolorbox{merke}{basis, colframe=merkFarbe, colback=merkFarbe!5,
+  title={Merke}}
+\newtcolorbox{beispiel}[1]{basis, colframe=bspFarbe, colback=bspFarbe!4,
+  title={Beispiel: #1}}
+\newtcolorbox{pruefung}{basis, colframe=pruefFarbe, colback=pruefFarbe!4,
+  title={Prüfungstipp}}
+
+% =====================================================================
+%  Wochenziele-Tabelle
+%    \begin{wochenziele}
+%      \ziel{Lernpunkt}{Lernziel}
+%    \end{wochenziele}
+%  Die Nummern werden automatisch gezählt.
+% =====================================================================
+\newcounter{zielnr}
+\newcommand{\ziel}[2]{\stepcounter{zielnr}\thezielnr & #1 & #2 \\}
+\newenvironment{wochenziele}{%
+  \setcounter{zielnr}{0}%
+  \par\noindent
+  \renewcommand{\arraystretch}{1.35}%
+  \rowcolors{2}{hsluBlau!5}{white}%
+  \tabularx{\linewidth}{@{}r>{\raggedright\arraybackslash}p{0.3\linewidth}>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Nr.} & \textbf{Lernpunkt} & \textbf{Lernziel} \\
+  \midrule
+}{%
+  \bottomrule
+  \endtabularx
+  \par
+}
+
+% =====================================================================
+%  Programmcode
+%    \begin{lstlisting}[language=Python] ... \end{lstlisting}
+% =====================================================================
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codeHintergrund},
+  keywordstyle=\color{hsluBlau}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{bspFarbe},
+  numbers=left, numberstyle=\tiny\color{gray},
+  frame=single, rulecolor=\color{gray!40},
+  breaklines=true, showstringspaces=false, tabsize=4,
+  literate={ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+           {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1 {ß}{{\ss}}1
+}
+
+% =====================================================================
+%  Kurzbefehle
+% =====================================================================
+\newcommand{\Oh}[1]{\mathcal{O}\!\left(#1\right)}   % \Oh{n^2}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\vec}[1]{\mathbf{#1}}                 % Vektoren fett

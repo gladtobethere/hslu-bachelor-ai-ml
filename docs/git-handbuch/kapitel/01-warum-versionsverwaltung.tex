@@ -1,0 +1,117 @@
+% ---------------------------------------------------------------------
+\chapter{Warum Versionsverwaltung?}
+\label{kap:warum}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item die Probleme kennen, die ohne Versionsverwaltung entstehen,
+  \item verstehen, was ein Versionsverwaltungssystem leistet,
+  \item Git und GitHub klar voneinander unterscheiden,
+  \item wissen, warum Git in der Industrie zum Standard geworden ist.
+\end{itemize}
+\end{lernziele}
+
+\section{Das Problem}
+
+Jeder kennt Ordner, die so aussehen:
+
+\begin{lstlisting}[style=ausgabe]
+bericht.docx
+bericht_v2.docx
+bericht_v2_korrigiert.docx
+bericht_final.docx
+bericht_final_wirklich_final.docx
+bericht_final_wirklich_final_Anna.docx
+\end{lstlisting}
+
+Bei einem einzelnen Dokument ist das lästig. Bei Software mit Hunderten von Dateien und
+mehreren Beteiligten wird es unbeherrschbar. Vier Fragen lassen sich ohne Werkzeug kaum
+noch beantworten:
+
+\begin{enumerate}
+  \item \textbf{Was hat sich geändert?} Welche Zeilen sind zwischen gestern und heute anders?
+  \item \textbf{Wer hat es geändert und warum?} Wer hat die Zeile eingefügt, die seit Montag
+        einen Fehler verursacht, und was war die Absicht?
+  \item \textbf{Wie komme ich zurück?} Gestern lief das Programm noch. Wie stelle ich den
+        damaligen Zustand wieder her, ohne die Arbeit von heute zu verlieren?
+  \item \textbf{Wie arbeiten mehrere Personen gleichzeitig?} Anna und Ben ändern am selben
+        Tag dieselbe Datei. Wessen Version gilt?
+\end{enumerate}
+
+\section{Die Lösung: ein Versionsverwaltungssystem}
+
+\begin{definition}{Versionsverwaltung}
+Ein \begriff{Versionsverwaltungssystem} (englisch \emph{Version Control System}, VCS)
+speichert die Geschichte eines Projekts als Folge von Zwischenständen. Zu jedem
+Zwischenstand werden Autor, Zeitpunkt und eine Beschreibung festgehalten. Jeder frühere
+Stand lässt sich jederzeit wiederherstellen und mit anderen vergleichen.
+\end{definition}
+
+Damit sind die vier Fragen beantwortet: Das System weiss, \emph{was} sich geändert hat,
+\emph{wer} es war und \emph{warum}, es kann zu jedem Stand \emph{zurück}, und es kann die
+Arbeit mehrerer Personen \emph{zusammenführen}.
+
+Ein Versionsverwaltungssystem ersetzt dabei kein Backup und keinen Cloud-Speicher wie
+OneDrive. Der Unterschied liegt in der Absicht: Ein Cloud-Speicher synchronisiert
+\emph{automatisch} jede Änderung. Bei der Versionsverwaltung entscheidet der Mensch
+\emph{bewusst}, wann ein Stand gut genug ist, um festgehalten zu werden, und beschreibt ihn.
+Dadurch entsteht eine lesbare Geschichte statt eines Stroms von Dateiversionen.
+
+\section{Git}
+
+\begriff{Git} ist das mit Abstand verbreitetste Versionsverwaltungssystem. Es ist kostenlos,
+quelloffen und läuft auf jedem Betriebssystem.
+
+\begin{hintergrund}
+Linus Torvalds, der Erfinder von Linux, entwickelte Git im Jahr 2005 in wenigen Wochen.
+Das Linux-Projekt hatte damals Tausende Mitwirkende auf der ganzen Welt und verlor über
+Nacht das Recht, sein bisheriges Werkzeug kostenlos zu nutzen. Torvalds' Anforderungen waren
+entsprechend hoch: Git sollte sehr schnell sein, auch ohne Internetverbindung funktionieren,
+und kein einzelner Server sollte das Projekt lahmlegen können. Diese Entscheidungen prägen
+Git bis heute.
+\end{hintergrund}
+
+Die wichtigste dieser Entscheidungen: Git ist \begriff{verteilt}. Ältere Systeme hatten
+einen zentralen Server, auf dem die Geschichte lag. Ohne Verbindung zum Server konnte man
+nicht arbeiten. Bei Git besitzt dagegen \textbf{jede Kopie die vollständige Geschichte}.
+Man kann offline Zwischenstände speichern, die Geschichte durchsuchen und Versionen
+vergleichen. Synchronisiert wird nur, wenn man es will.
+
+\section{Git und GitHub: zwei verschiedene Dinge}
+
+Einsteiger verwechseln die beiden häufig, dabei ist die Trennung einfach:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+  \toprule
+                     & \textbf{Git} & \textbf{GitHub} \\
+  \midrule
+  Was es ist         & ein Programm auf dem eigenen Computer & ein Internetdienst (Website) \\
+  Aufgabe            & Geschichte speichern, vergleichen, zusammenführen & Kopien im Internet aufbewahren und teilen \\
+  Zusätzliches       & –  & Pull Requests, Code Review, automatische Tests, Fehlerverwaltung \\
+  Gehört zu          & freie Software, keiner Firma & Microsoft (seit 2018) \\
+  Alternativen       & –  & GitLab, Bitbucket, eigener Server \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+Ein Vergleich hilft: Git ist wie die Fotokamera, GitHub wie das Online-Fotoalbum, in dem
+man Bilder sichert und mit anderen teilt. Die Kamera funktioniert auch ohne Album. Das Album
+ist aber der Ort, an dem die Zusammenarbeit stattfindet.
+
+\begin{praxis}
+In Unternehmen ist die Plattform (GitHub, GitLab oder Bitbucket) das Zentrum der
+Entwicklungsarbeit. Dort wird nicht nur Code aufbewahrt: Jede Änderung wird dort von
+Kolleginnen und Kollegen geprüft (\emph{Code Review}), automatisch getestet und erst dann
+übernommen. Diese Abläufe werden in Kapitel~\ref{kap:pr} behandelt.
+\end{praxis}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Versionsverwaltung beantwortet: Was hat sich geändert, wer war es und warum,
+        wie komme ich zurück, wie arbeiten mehrere Personen zusammen?
+  \item Git ist das Werkzeug auf dem eigenen Computer, GitHub der Dienst im Internet.
+  \item Git ist verteilt: Jede Kopie enthält die ganze Geschichte.
+\end{itemize}
+\end{zusammenfassung}

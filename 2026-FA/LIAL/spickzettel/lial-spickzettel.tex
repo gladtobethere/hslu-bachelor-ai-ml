@@ -1,0 +1,49 @@
+% =====================================================================
+%  LIAL: Spickzettel für die Prüfung (Open-Book)
+%  Kurz und dicht: nur Formeln, Verfahren und Fallen, keine Erklärtexte.
+% =====================================================================
+\documentclass[fontsize=8pt, a4paper, landscape]{scrartcl}
+\input{../../_latex/praeambel}
+\geometry{landscape, margin=8mm}
+\usepackage{multicol}
+\setlength{\columnsep}{6mm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+
+% Thema-Überschrift im Spickzettel
+\newcommand{\thema}[1]{\par\smallskip{\color{hsluBlau}\bfseries\large #1}\par\hrule\smallskip}
+
+\begin{document}
+\begin{multicols*}{3}
+{\color{hsluBlau}\bfseries\Large LIAL – Lineare Algebra}\par\smallskip
+
+\thema{Vektoren, Matrizen, Gleichungssysteme, Skalarprodukt}
+% Formeln, Verfahren, Fallen
+
+\thema{Gauss-Elimination}
+% Formeln, Verfahren, Fallen
+
+\thema{LR-Zerlegung}
+% Formeln, Verfahren, Fallen
+
+\thema{Inverse, Gauss-Jordan, Vektorprodukt, Determinante}
+% Formeln, Verfahren, Fallen
+
+\thema{Lineare Abbildungen und Matrizen}
+% Formeln, Verfahren, Fallen
+
+\thema{Einfache lineare Regression}
+% Formeln, Verfahren, Fallen
+
+\thema{Multiple lineare Regression}
+% Formeln, Verfahren, Fallen
+
+\thema{Eigenwerte, Eigenvektoren und ihre geometrische Bedeutung}
+% Formeln, Verfahren, Fallen
+
+\thema{Diagonalisierung, Spektralsatz}
+% Formeln, Verfahren, Fallen
+
+\end{multicols*}
+\end{document}

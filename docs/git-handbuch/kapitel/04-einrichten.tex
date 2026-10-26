@@ -1,0 +1,118 @@
+% ---------------------------------------------------------------------
+\chapter{Einrichten}
+\label{kap:einrichten}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item Git so einrichten, dass jeder Commit korrekt dem eigenen Namen zugeordnet wird,
+  \item die GitHub-Anmeldung auf der Kommandozeile einrichten,
+  \item ein bestehendes Projekt klonen oder ein neues anlegen.
+\end{itemize}
+\end{lernziele}
+
+\section{Die eigene Identität}
+
+Jeder Commit speichert, \emph{wer} ihn erstellt hat. Darum muss Git einmalig Name und
+E-Mail-Adresse kennen:
+
+\begin{lstlisting}[style=befehle]
+git config --global user.name  "Bahram Alizadah"
+git config --global user.email "name@example.com"
+\end{lstlisting}
+
+\begin{teile}
+  config        & Einstellungen von Git lesen oder schreiben \\
+  --global      & gilt für alle Repositorys dieses Benutzers auf diesem Computer \\
+  user.name     & der Name, der in jedem Commit als Autor erscheint \\
+  user.email    & die E-Mail-Adresse des Autors \\
+\end{teile}
+
+Die E-Mail-Adresse sollte dieselbe sein wie im GitHub-Konto. Nur dann kann GitHub die
+Commits dem Profil zuordnen und mit dem eigenen Bild anzeigen.
+
+\begin{praxis}
+In Unternehmen ist die korrekte Identität keine Formsache. Über die Geschichte lässt sich
+für jede Codezeile nachvollziehen, wer sie wann eingeführt hat. Das hilft bei der
+Fehlersuche („Wen frage ich, was hier gemeint war?“) und ist in regulierten Branchen wie
+Banken oder Medizintechnik oft vorgeschrieben.
+\end{praxis}
+
+\section{Zwei sinnvolle Grundeinstellungen}
+
+\begin{lstlisting}[style=befehle]
+git config --global init.defaultBranch main
+git config --global core.autocrlf true
+\end{lstlisting}
+
+\begin{teile}
+  init.defaultBranch main & neue Repositorys erhalten den Hauptbranch \cmd{main}, wie es heute üblich ist \\
+  core.autocrlf true      & passt unter Windows die Zeilenenden automatisch an (siehe Abschnitt~\ref{sec:zeilenenden}) \\
+\end{teile}
+
+Alle aktuellen Einstellungen zeigt:
+
+\begin{lstlisting}[style=befehle]
+git config --global --list
+\end{lstlisting}
+
+\section{Anmeldung bei GitHub}
+
+Für Pull Requests auf der Kommandozeile gibt es das Programm \cmd{gh} (GitHub CLI). Es
+muss einmal pro Computer angemeldet werden:
+
+\begin{lstlisting}[style=befehle]
+gh auth login --hostname github.com --git-protocol https --web
+\end{lstlisting}
+
+\begin{teile}
+  auth login              & Anmeldung starten \\
+  --hostname github.com   & bei welchem Dienst (es gibt auch firmeneigene GitHub-Server) \\
+  --git-protocol https    & wie Daten übertragen werden; HTTPS ist der einfachste Weg \\
+  --web                   & Anmeldung im Browser mit einem einmaligen Code \\
+\end{teile}
+
+Danach zeigt \cmd{gh} einen achtstelligen Code an. Im Browser wird er auf
+\cmd{github.com/login/device} eingegeben und mit \emph{Authorize} bestätigt. \cmd{gh}
+erhält dadurch einen \begriff{Token}, einen digitalen Schlüssel, mit dem es im Namen des
+Benutzers handeln darf. Windows speichert ihn sicher in der Anmeldeinformationsverwaltung.
+
+\begin{fehler}
+In \emph{Git Bash} bricht \cmd{gh auth login} ohne Optionen mit „could not prompt“ ab.
+Git Bash kann die Auswahlmenüs von \cmd{gh} nicht darstellen. Mit den oben gezeigten
+Optionen entfallen die Menüs. Alternativ funktioniert PowerShell.
+\end{fehler}
+
+\section{Ein Repository beschaffen}
+
+Es gibt zwei Wege zu einem Repository.
+
+\textbf{Klonen} kopiert ein bestehendes Repository von GitHub auf den eigenen Computer,
+samt vollständiger Geschichte. Das ist der Normalfall:
+
+\begin{lstlisting}[style=befehle]
+cd D:\github
+gh repo clone gladtobethere/hslu-bachelor-ai-ml
+\end{lstlisting}
+
+Es entsteht der Ordner \texttt{D:\textbackslash{}github\textbackslash{}hslu-bachelor-ai-ml}, und \cmd{origin} zeigt
+automatisch auf GitHub. Mit reinem Git lautet der Befehl \cmd{git clone <URL>}.
+
+\textbf{Neu anlegen} macht einen bestehenden Ordner zu einem Repository:
+
+\begin{lstlisting}[style=befehle]
+git init                       # legt den Ordner .git an
+\end{lstlisting}
+
+\begin{erfahrung}
+Ein Ordner pro Repository, an einem festen Ort, zum Beispiel \texttt{D:\textbackslash{}github\textbackslash{}<repo>}.
+Mehrere Kopien desselben Repositorys auf einem Computer führen früher oder später dazu,
+dass man in der falschen Kopie arbeitet und Änderungen „verschwinden“.
+\end{erfahrung}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Einmalig \cmd{user.name} und \cmd{user.email} setzen, passend zum GitHub-Konto.
+  \item \cmd{gh auth login} meldet die Kommandozeile bei GitHub an.
+  \item Klonen holt ein bestehendes Repository, \cmd{git init} legt ein neues an.
+\end{itemize}
+\end{zusammenfassung}

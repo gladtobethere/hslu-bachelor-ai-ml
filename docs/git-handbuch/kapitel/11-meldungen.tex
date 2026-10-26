@@ -1,0 +1,99 @@
+% ---------------------------------------------------------------------
+\chapter{Meldungen verstehen}
+\label{kap:meldungen}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item die häufigsten Meldungen von Git und \cmd{gh} einordnen,
+  \item zwischen harmlosen Hinweisen und echten Fehlern unterscheiden.
+\end{itemize}
+\end{lernziele}
+
+Git unterscheidet drei Arten von Meldungen. Sie beginnen meist mit einem Schlüsselwort:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Beginnt mit} & \textbf{Bedeutung} \\
+  \midrule
+  hint:    & Tipp; der Befehl war erfolgreich oder Git schlägt den nächsten Schritt vor \\
+  warning: & Hinweis; der Befehl wurde ausgeführt, aber etwas ist bemerkenswert \\
+  error: / fatal: & Fehler; der Befehl wurde \textbf{nicht} ausgeführt \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Zustandsmeldungen}
+
+\meldung{nothing to commit, working tree clean}
+  {Es gibt keine Änderungen. Arbeitsordner und letzter Commit sind identisch.}
+  {Nichts. Alles ist gespeichert.}
+
+\meldung{Your branch is ahead of \textquotesingle{}origin/main\textquotesingle{} by 1 commit.}
+  {Ein lokaler Commit ist noch nicht auf GitHub.}
+  {\cmd{git push}}
+
+\meldung{Your branch is behind \textquotesingle{}origin/main\textquotesingle{} by 2 commits.}
+  {Auf GitHub gibt es neue Commits, die lokal fehlen.}
+  {\cmd{git pull}}
+
+\section{Hinweise}
+
+\meldung{warning: in the working copy of \textquotesingle{}datei.py\textquotesingle, LF will be replaced by CRLF}
+  {Die Datei verwendet Zeilenenden im Linux-Format. Git wird sie unter Windows anpassen
+   (siehe Abschnitt~\ref{sec:zeilenenden}).}
+  {Nichts. Reine Information.}
+
+\section{Fehler}
+
+\meldung{error: src refspec ads does not match any}
+  {\cmd{git push} soll den Branch \cmd{ads} hochladen, der lokal nicht existiert.
+   Meist wurde \cmd{git switch -c ads} vergessen und auf \cmd{main} committet.}
+  {Mit \cmd{git branch} prüfen. Den Branch nachträglich anlegen: \cmd{git switch -c ads},
+   dann erneut pushen.}
+
+\meldung{no pull requests found for branch "ads"}
+  {\cmd{gh pr merge} findet keinen Pull Request, weil \cmd{gh pr create} übersprungen wurde.}
+  {Zuerst \cmd{gh pr create --fill}, dann mergen.}
+
+\meldung{fatal: not a git repository (or any of the parent directories): .git}
+  {Das Terminal steht in einem Ordner, der zu keinem Repository gehört.}
+  {Mit \cmd{cd} in den Repository-Ordner wechseln.}
+
+\meldung{! [rejected] main -> main (fetch first)}
+  {Auf GitHub gibt es Commits, die lokal fehlen. Git verweigert das Überschreiben, um
+   fremde Arbeit zu schützen.}
+  {Zuerst \cmd{git pull}, gegebenenfalls Konflikte lösen, dann \cmd{git push}.}
+
+\meldung{CONFLICT (content): Merge conflict in README.md}
+  {Dieselbe Stelle wurde auf zwei Wegen unterschiedlich geändert.}
+  {Siehe Kapitel~\ref{kap:zusammenarbeit}.}
+
+\meldung{could not prompt: Incorrect function. You appear to be running in MinTTY}
+  {Git Bash kann die Auswahlmenüs von \cmd{gh} nicht darstellen.}
+  {Alle Antworten als Optionen mitgeben oder PowerShell verwenden.}
+
+\meldung{refusing to allow an OAuth App to create or update workflow \textasciigrave.github/workflows/ci.yml\textasciigrave{} without \textasciigrave workflow\textasciigrave{} scope}
+  {Der Push enthält eine Datei unter \cmd{.github/workflows/}. Die Anmeldung von \cmd{gh}
+   hat dafür keine Berechtigung, weil Workflows automatisch Code ausführen.}
+  {\cmd{gh auth refresh -h github.com -s workflow} und im Browser bestätigen.}
+
+\section{Zeilenenden}
+\label{sec:zeilenenden}
+
+Ein Zeilenumbruch ist in einer Textdatei ein unsichtbares Zeichen. Linux und macOS
+verwenden eines, \emph{Line Feed} (LF). Windows verwendet zwei, \emph{Carriage Return} und
+\emph{Line Feed} (CRLF). Die Namen stammen von der Schreibmaschine: Wagen zurückschieben,
+Papier eine Zeile weiterdrehen.
+
+Mit der Einstellung \cmd{core.autocrlf = true} wandelt Git beim Auschecken unter Windows in
+CRLF um und speichert im Repository LF. So passt jede Datei auf jedem System, und
+Unterschiede in den Zeilenenden erscheinen nicht als Änderungen.
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item \cmd{hint:} und \cmd{warning:} sind Informationen, \cmd{error:} und \cmd{fatal:} echte Fehler.
+  \item Fast jede Fehlermeldung nennt Ursache und Lösung. In Ruhe lesen lohnt sich.
+\end{itemize}
+\end{zusammenfassung}
