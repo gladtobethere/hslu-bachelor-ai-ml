@@ -1,0 +1,40 @@
+% =====================================================================
+%  ADS: Spickzettel für die Prüfung (Open-Book)
+%  Kurz und dicht: nur Formeln, Verfahren und Fallen, keine Erklärtexte.
+% =====================================================================
+\documentclass[fontsize=8pt, a4paper, landscape]{scrartcl}
+\input{../../_latex/praeambel}
+\geometry{landscape, margin=8mm}
+\usepackage{multicol}
+\setlength{\columnsep}{6mm}
+\setlength{\columnseprule}{0.3pt}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+
+% Thema-Überschrift im Spickzettel
+\newcommand{\thema}[1]{\par\smallskip{\color{hsluBlau}\bfseries\large #1}\par\hrule\smallskip}
+
+\begin{document}
+\begin{multicols*}{3}
+{\color{hsluBlau}\bfseries\Large ADS – Algorithmen \& Datenstrukturen}\par\smallskip
+
+\thema{SW01 Asymptotische Analyse, O-Notation, Rekursion}
+% Formeln, Verfahren, Fallen
+
+\thema{SW02 Lineare Datenstrukturen: Listen, Stacks, Queues, Deques, Iteratoren}
+% Formeln, Verfahren, Fallen
+
+\thema{SW03 Allgemeine und binäre Bäume, Baumtraversierungen}
+% Formeln, Verfahren, Fallen
+
+\thema{SW04 Priority-Queue, Heap, Adaptable Priority-Queue}
+% Formeln, Verfahren, Fallen
+
+\thema{SW05 Set, Multiset, Map, Multimap, Hashtabelle}
+% Formeln, Verfahren, Fallen
+
+\thema{SW06 Binary-Search-Tree}
+% Formeln, Verfahren, Fallen
+
+\end{multicols*}
+\end{document}

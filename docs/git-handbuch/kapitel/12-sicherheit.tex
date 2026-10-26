@@ -1,0 +1,123 @@
+% ---------------------------------------------------------------------
+\chapter{Sicherheit und Ordnung im Repository}
+\label{kap:sicherheit}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item wissen, was nicht in ein Repository gehört und warum,
+  \item eine \cmd{.gitignore} lesen und schreiben,
+  \item richtig reagieren, wenn ein Passwort versehentlich auf GitHub gelandet ist.
+\end{itemize}
+\end{lernziele}
+
+\section{Was nicht ins Repository gehört}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.6cm}@{}}
+  \toprule
+  \textbf{Was} & \textbf{Warum nicht} & \textbf{Stattdessen} \\
+  \midrule
+  Passwörter, API-Schlüssel, Tokens & werden mit dem Repository geteilt und bleiben in der Geschichte & Datei \cmd{.env}, in \cmd{.gitignore} \\
+  erzeugte Dateien (PDF aus LaTeX, \cmd{__pycache__}, \cmd{build/}) & lassen sich jederzeit neu erzeugen und verursachen unnötige Konflikte & in \cmd{.gitignore} \\
+  grosse Dateien (Videos, Datensätze) & Git speichert jede Version vollständig; das Repository wird riesig. GitHub lehnt Dateien über 100\,MB ab & Cloud-Speicher, Git LFS \\
+  persönliche Einstellungen, Daten von Programmen & betreffen nur ein Gerät & lokal lassen \\
+  urheberrechtlich geschütztes Material Dritter & in öffentlichen Repositorys eine Rechtsverletzung & privates Repository oder Verweis \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{praxis}
+Die Faustregel in der Industrie lautet: \textbf{Ins Repository gehört die Quelle, nicht das
+Ergebnis.} Die \cmd{.tex}-Datei kommt hinein, das daraus erzeugte PDF nicht. Der
+Python-Code kommt hinein, die erzeugten \cmd{.pyc}-Dateien nicht. Jeder kann das Ergebnis
+aus der Quelle neu herstellen.
+\end{praxis}
+
+\section{Die Datei .gitignore}
+
+Die Datei \cmd{.gitignore} im Hauptordner listet Dateien und Ordner, die Git ignorieren soll.
+Sie erscheinen dann nicht in \cmd{git status} und werden von \cmd{git add -A} übergangen.
+
+\begin{lstlisting}[style=ausgabe]
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# LaTeX: PDF entsteht beim Kompilieren neu
+build/
+*.aux
+*.log
+
+# Geheimnisse
+.env
+\end{lstlisting}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Muster} & \textbf{Wirkung} \\
+  \midrule
+  build/       & der Ordner \cmd{build} an jeder Stelle, mit allem Inhalt \\
+  *.log        & alle Dateien mit der Endung \cmd{.log}; \cmd{*} steht für beliebige Zeichen \\
+  .env         & genau diese Datei \\
+  !wichtig.log & Ausnahme: diese Datei trotz \cmd{*.log} nicht ignorieren \\
+  \texttt{\#} Text & Kommentar \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+Prüfen, warum eine Datei ignoriert wird:
+
+\begin{lstlisting}[style=befehle]
+git check-ignore -v build/ads.pdf      # -v (verbose): nennt Datei und Zeile der Regel
+\end{lstlisting}
+
+\begin{fehler}
+Eine Datei wird nachträglich in \cmd{.gitignore} eingetragen, erscheint aber weiter in
+\cmd{git status}. Ursache: \cmd{.gitignore} wirkt nur auf Dateien, die Git noch nicht kennt.
+Eine bereits committete Datei muss zuerst aus dem Index genommen werden:
+\cmd{git rm --cached <datei>}. Die Datei bleibt auf der Festplatte erhalten.
+\end{fehler}
+
+\section{Wenn ein Geheimnis auf GitHub gelandet ist}
+
+\begin{achtung}
+Ein Passwort oder Schlüssel, der einmal auf GitHub war, gilt als \textbf{veröffentlicht}.
+Automatische Programme durchsuchen öffentliche Repositorys rund um die Uhr nach solchen
+Schlüsseln, oft innerhalb von Minuten nach dem Push. Das Löschen der Datei in einem neuen
+Commit genügt nicht: Der Schlüssel bleibt in der Geschichte lesbar.
+\end{achtung}
+
+Richtiges Vorgehen, in dieser Reihenfolge:
+
+\begin{enumerate}
+  \item \textbf{Den Schlüssel sofort ungültig machen} und einen neuen erzeugen, beim
+        jeweiligen Dienst. Das ist der einzige Schritt, der den Schaden wirklich begrenzt.
+  \item Die Datei aus dem Repository entfernen und in \cmd{.gitignore} eintragen.
+  \item Bei Bedarf die Geschichte bereinigen lassen. Das ist aufwendig und gehört in
+        erfahrene Hände.
+\end{enumerate}
+
+\section{Öffentlich oder privat?}
+
+Ein \textbf{öffentliches} Repository kann jeder Mensch lesen und kopieren. Es eignet sich als
+Portfolio für eigene Arbeiten und wird von Arbeitgebern gerne angesehen. Ein
+\textbf{privates} Repository sehen nur eingeladene Personen. Dorthin gehören Unterlagen
+Dritter, persönliche Notizen und alles, was nicht für die Öffentlichkeit bestimmt ist.
+
+\begin{erfahrung}
+Ein öffentliches GitHub-Profil ist heute oft Teil einer Bewerbung. Saubere Commits,
+verständliche README-Dateien und eine nachvollziehbare Geschichte sagen über die Arbeitsweise
+mehr aus als jedes Zeugnis.
+\end{erfahrung}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Quelle ja, Ergebnis nein. Keine Geheimnisse, keine grossen Dateien.
+  \item \cmd{.gitignore} steuert, was Git übersieht; bereits bekannte Dateien mit \cmd{git rm --cached} lösen.
+  \item Geleakter Schlüssel: zuerst ungültig machen, dann aufräumen.
+\end{itemize}
+\end{zusammenfassung}

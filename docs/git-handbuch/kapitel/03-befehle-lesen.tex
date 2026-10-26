@@ -1,0 +1,157 @@
+% ---------------------------------------------------------------------
+\chapter{Befehle lesen und verstehen}
+\label{kap:lesen}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item wissen, was ein Terminal ist und was der aktuelle Ordner bedeutet,
+  \item jeden Befehl in seine Bestandteile zerlegen können,
+  \item den Unterschied zwischen \cmd{-x} und \cmd{--wort} begründen können,
+  \item sich zu jedem Befehl selbst Hilfe holen können.
+\end{itemize}
+\end{lernziele}
+
+\section{Das Terminal}
+
+Git wird meist über ein \begriff{Terminal} bedient, ein Fenster, in das man Befehle als Text
+eingibt. Unter Windows sind das zum Beispiel \emph{PowerShell} oder \emph{Git Bash}, in VS Code
+das Terminal am unteren Rand. Grafische Oberflächen für Git gibt es auch, sie bauen aber auf
+denselben Befehlen auf. Wer die Befehle versteht, versteht auch jede Oberfläche.
+
+Das Terminal zeigt vor dem Cursor eine Zeile, die \begriff{Eingabeaufforderung}
+(\emph{prompt}). Sie verrät, wo man sich befindet:
+
+\begin{lstlisting}[style=ausgabe]
+PS D:\github\hslu-bachelor-ai-ml\2026-FA\ADS>
+bahram@PC MINGW64 /d/github/hslu-bachelor-ai-ml (main)
+\end{lstlisting}
+
+Die erste Zeile stammt aus PowerShell, die zweite aus Git Bash. Git Bash zeigt in Klammern
+zusätzlich den aktuellen Branch an, hier \cmd{main}.
+
+\subsection*{Der aktuelle Ordner}
+
+Jedes Terminal „steht“ in einem Ordner, dem \begriff{aktuellen Arbeitsverzeichnis}. Alle
+Pfade, die man angibt, gelten \textbf{relativ zu diesem Ordner}. Das ist der häufigste Grund,
+warum ein Befehl „nicht funktioniert“: Man steht im falschen Ordner.
+
+\begin{lstlisting}[style=befehle]
+cd D:\github\hslu-bachelor-ai-ml       # in den Ordner wechseln (change directory)
+cd 2026-FA\ADS                         # relativ: einen Unterordner tiefer
+cd ..                                  # einen Ordner nach oben
+pwd                                    # zeigen, wo man steht (print working dir.)
+\end{lstlisting}
+
+Git-Befehle wirken immer auf das Repository, in dem der aktuelle Ordner liegt. Git sucht
+dazu vom aktuellen Ordner aus nach oben, bis es den Ordner \cmd{.git} findet. Deshalb
+funktionieren Git-Befehle in jedem Unterordner eines Repositorys.
+
+\section{Aufbau eines Befehls}
+
+Alle Git-Befehle folgen demselben Muster:
+
+\begin{center}
+\begin{tikzpicture}[
+    teil/.style={font=\ttfamily\large, inner sep=2pt},
+    erkl/.style={font=\small, align=center},
+    klammer/.style={decorate, decoration={brace, amplitude=4pt, mirror}, thick, hsluBlau}
+  ]
+  \node[teil] (p)  at (0,0)    {git};
+  \node[teil] (u)  at (2.2,0)  {diff};
+  \node[teil] (o1) at (4.6,0)  {--cached};
+  \node[teil] (o2) at (7.0,0)  {--stat};
+  \node[teil] (t)  at (9.0,0)  {--};
+  \node[teil] (a)  at (11.2,0) {datei.py};
+  \draw[klammer] (p.south west)  -- (p.south east)  node[midway, below=6pt, erkl] {Programm};
+  \draw[klammer] (u.south west)  -- (u.south east)  node[midway, below=6pt, erkl] {Unterbefehl:\\was getan wird};
+  \draw[klammer] (o1.south west) -- (o2.south east) node[midway, below=6pt, erkl] {Optionen:\\wie es getan wird};
+  \draw[klammer] (t.south west)  -- (t.south east)  node[midway, below=6pt, erkl] {Trenner};
+  \draw[klammer] (a.south west)  -- (a.south east)  node[midway, below=6pt, erkl] {Argument:\\worauf};
+\end{tikzpicture}
+\end{center}
+
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[Programm] \cmd{git} oder \cmd{gh}. Das Terminal startet dieses Programm.
+  \item[Unterbefehl] die Tätigkeit: \cmd{status}, \cmd{add}, \cmd{commit}, \ldots{} Git hat
+    über hundert Unterbefehle. Für den Alltag genügen etwa fünfzehn.
+  \item[Optionen] verändern \emph{wie} der Unterbefehl arbeitet. Sie beginnen mit einem
+    oder zwei Strichen. Die meisten sind freiwillig.
+  \item[Argumente] sagen, \emph{worauf} sich der Befehl bezieht, zum Beispiel Dateien,
+    Ordner oder Branch-Namen.
+\end{description}
+
+\section{Ein Strich oder zwei Striche}
+
+Die Schreibweise der Optionen ist keine Eigenheit von Git, sondern eine Konvention, die
+fast alle Kommandozeilen-Programme seit den 1990er-Jahren teilen:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}l>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Form} & \normalfont\textbf{Beispiel} & \textbf{Zweck} \\
+  \midrule
+  ein Strich, ein Buchstabe & -m, -s, -b & Kurzform: schnell zu tippen, für den Alltag \\
+  zwei Striche, ganzes Wort & --message, --short & Langform: selbsterklärend, für Skripte und Dokumentation \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+Viele Optionen gibt es in beiden Formen: \cmd{-m} und \cmd{--message} bedeuten dasselbe.
+
+Die zwei Striche haben einen technischen Grund. Kurzformen dürfen \textbf{zusammengezogen}
+werden: \cmd{-sb} bedeutet dasselbe wie \cmd{-s -b}. Würde man ganze Wörter mit nur einem
+Strich schreiben, wäre \cmd{-stat} mehrdeutig: die Option \cmd{stat}, oder die vier
+Optionen \cmd{-s -t -a -t}? Der doppelte Strich beseitigt diese Mehrdeutigkeit.
+
+\subsection*{Optionen mit Wert}
+
+Manche Optionen brauchen einen Wert. Bei der Kurzform folgt er nach einem Leerzeichen, bei
+der Langform meist nach einem Gleichheitszeichen:
+
+\begin{lstlisting}[style=befehle]
+git commit -m "Stack implementiert"     # Kurzform
+git log --format="%h %s"                # Langform
+\end{lstlisting}
+
+Enthält ein Wert Leerzeichen, gehört er in \textbf{Anführungszeichen}. Das Terminal trennt
+Eingaben an Leerzeichen auf. Ohne Anführungszeichen würde
+\cmd{git commit -m Stack implementiert} nur \cmd{Stack} als Nachricht verwenden und
+\cmd{implementiert} als Dateinamen deuten.
+
+\subsection*{Zwei Striche ohne Wort}
+
+Ein alleinstehendes \cmd{--} bedeutet: „Ab hier folgen keine Optionen mehr, nur noch Pfade.“
+Das ist nötig, wenn ein Dateiname wie eine Option oder ein Branch aussieht:
+
+\begin{lstlisting}[style=befehle]
+git restore -- main.py         # "main.py" ist sicher eine Datei, kein Branch "main"
+\end{lstlisting}
+
+Im Alltag braucht man das selten. Es taucht aber oft in Anleitungen und Fehlermeldungen auf.
+
+\section{Hilfe zu jedem Befehl}
+
+Niemand kennt alle Optionen auswendig. Erfahrene Entwicklerinnen und Entwickler schlagen
+ständig nach. Git liefert die Dokumentation gleich mit:
+
+\begin{lstlisting}[style=befehle]
+git diff -h                    # kurze Übersicht aller Optionen im Terminal
+git help diff                  # ausführliches Handbuch im Browser
+\end{lstlisting}
+
+\begin{erfahrung}
+Fehlermeldungen von Git sind ungewöhnlich hilfreich. Sie nennen fast immer die Ursache und
+oft schon den passenden Befehl, besonders in Zeilen, die mit \cmd{hint:} beginnen. Wer sie
+in Ruhe liest, statt sie wegzuklicken, löst die meisten Probleme selbst.
+\end{erfahrung}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Pfade gelten relativ zum aktuellen Ordner des Terminals.
+  \item Aufbau: Programm, Unterbefehl, Optionen, Argumente.
+  \item \cmd{-x} ist die Kurzform, \cmd{--wort} die Langform. Kurzformen lassen sich zusammenziehen.
+  \item Werte mit Leerzeichen gehören in Anführungszeichen. \cmd{--} allein trennt Optionen von Pfaden.
+  \item \cmd{git <befehl> -h} und \cmd{git help <befehl>} liefern Hilfe.
+\end{itemize}
+\end{zusammenfassung}

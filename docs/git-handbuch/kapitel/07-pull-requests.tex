@@ -1,0 +1,150 @@
+% ---------------------------------------------------------------------
+\chapter{Pull Requests und Code Review}
+\label{kap:pr}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item verstehen, was ein Pull Request ist und warum er in der Industrie zentral ist,
+  \item wissen, was bei einem Code Review geprüft wird,
+  \item die drei Arten der Übernahme kennen und unterscheiden,
+  \item Pull Requests mit \cmd{gh} erstellen und übernehmen.
+\end{itemize}
+\end{lernziele}
+
+\section{Was ein Pull Request ist}
+
+\begin{definition}{Pull Request}
+Ein \begriff{Pull Request} (kurz PR) ist ein Antrag auf GitHub: „Bitte übernimm die Commits
+meines Branches in \cmd{main}.“ Er bündelt die Änderungen, ihre Beschreibung, die
+Diskussion darüber und die Ergebnisse automatischer Tests an einem Ort.
+\end{definition}
+
+Git selbst kennt keine Pull Requests. Sie sind eine Funktion der Plattform. Bei GitLab
+heisst dasselbe \emph{Merge Request}.
+
+Die Seite eines Pull Requests auf GitHub hat vier Reiter:
+
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[Conversation] Beschreibung, Kommentare und Freigaben.
+  \item[Commits] die einzelnen Commits des Branches.
+  \item[Checks] die Ergebnisse automatischer Tests.
+  \item[Files changed] alle Änderungen als Diff. Hier findet das Review statt: Zu jeder
+    Zeile kann man einen Kommentar schreiben.
+\end{description}
+
+\section{Code Review}
+
+Beim \begriff{Code Review} liest mindestens eine zweite Person die Änderungen, bevor sie
+übernommen werden. Typische Fragen dabei:
+
+\begin{itemize}
+  \item \textbf{Korrektheit:} Tut der Code, was er soll? Sind Sonderfälle bedacht, etwa
+        leere Listen oder fehlende Eingaben?
+  \item \textbf{Verständlichkeit:} Versteht jemand anderes den Code ohne Erklärung?
+        Sind Namen sprechend?
+  \item \textbf{Umfang:} Enthält der Pull Request nur, was zur Aufgabe gehört?
+  \item \textbf{Sicherheit:} Stehen Passwörter im Code? Werden Eingaben geprüft?
+  \item \textbf{Tests:} Ist die neue Funktion durch Tests abgesichert?
+\end{itemize}
+
+\begin{praxis}
+Studien und Erfahrungen grosser Firmen zeigen, dass Reviews viele Fehler finden, bevor sie
+Kundinnen und Kunden erreichen. Mindestens so wichtig ist aber ein Nebeneffekt: Wissen
+verteilt sich im Team. Wenn nur eine Person einen Programmteil kennt und krank wird, steht
+die Arbeit still. Durch Reviews kennen immer mindestens zwei Personen jede Änderung.
+
+Darum gilt in Teams: \textbf{Kleine Pull Requests werden gründlich geprüft, grosse nur
+überflogen.} Ein Pull Request sollte in 15 bis 30 Minuten verständlich sein.
+\end{praxis}
+
+\section{Automatische Prüfungen (CI)}
+
+Bei jedem Pull Request kann GitHub automatisch Programme ausführen, zum Beispiel Tests,
+Prüfungen des Codestils oder einen Testbuild. Das heisst \begriff{Continuous Integration}
+(CI), auf GitHub umgesetzt mit \emph{GitHub Actions}. Die Anweisungen dafür liegen als
+Datei im Repository unter \cmd{.github/workflows/}.
+
+Das Ergebnis erscheint im Pull Request als grüner Haken oder rotes Kreuz. Rot bedeutet:
+Etwas ist kaputt, die Übernahme wird blockiert. So gelangt fehlerhafter Code gar nicht erst
+nach \cmd{main}.
+
+\section{Drei Arten der Übernahme}
+
+Beim Übernehmen eines Pull Requests bietet GitHub drei Varianten an. Ausgangslage: Der
+Branch enthält drei Commits.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Option} & \textbf{Ergebnis in main} & \textbf{Typischer Einsatz} \\
+  \midrule
+  --merge  & alle drei Commits bleiben erhalten, dazu ein \emph{Merge-Commit}, der die Übernahme festhält
+           & wenn die einzelnen Schritte nachvollziehbar bleiben sollen; gut für den Einstieg \\
+  --squash & die drei Commits werden zu \textbf{einem} zusammengefasst
+           & sehr verbreitet in Firmen: \cmd{main} enthält genau einen Commit pro Aufgabe \\
+  --rebase & die drei Commits werden einzeln an \cmd{main} angehängt, ohne Merge-Commit
+           & wenn eine geradlinige Geschichte ohne Verzweigungen gewünscht ist \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{erfahrung}
+Es gibt keine „richtige“ Variante, nur eine einheitliche. Teams legen sich auf eine fest,
+damit die Geschichte von \cmd{main} einheitlich aussieht. In diesem Handbuch wird
+\cmd{--merge} verwendet, weil man im Log genau sieht, was wann übernommen wurde.
+\end{erfahrung}
+
+\section{Pull Requests auf der Kommandozeile}
+
+\begin{lstlisting}[style=befehle]
+gh pr create --fill
+\end{lstlisting}
+
+\begin{teile}
+  pr create & Pull Request vom aktuellen Branch nach \cmd{main} erstellen \\
+  --fill    & Titel und Beschreibung aus den Commit-Nachrichten übernehmen, ohne Rückfragen \\
+\end{teile}
+
+\begin{lstlisting}[style=befehle]
+gh pr merge --merge --delete-branch
+\end{lstlisting}
+
+\begin{teile}
+  pr merge        & den Pull Request des aktuellen Branches übernehmen \\
+  --merge         & Art der Übernahme (siehe oben) \\
+  --delete-branch & danach den Branch auf GitHub und lokal löschen und zu \cmd{main} wechseln \\
+\end{teile}
+
+Weitere nützliche Befehle:
+
+\begin{lstlisting}[style=befehle]
+gh pr list                             # offene Pull Requests anzeigen
+gh pr view --web                       # aktuellen Pull Request im Browser öffnen
+gh pr checks                           # Stand der automatischen Prüfungen
+\end{lstlisting}
+
+\section{Eine gute PR-Beschreibung}
+
+Die Beschreibung richtet sich an die prüfende Person. Sie beantwortet drei Fragen:
+
+\begin{lstlisting}[style=ausgabe]
+## Was ändert sich?
+Stack mit verketteter Liste statt Array implementiert.
+
+## Warum?
+Bei unbekannter Datenmenge braucht der Array-Stack teures Umkopieren.
+Die Liste wächst in O(1) pro Element.
+
+## Wie getestet?
+Eigene Tests in stack_test.py, alle grün.
+\end{lstlisting}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Ein Pull Request ist ein Antrag auf Übernahme mit Diskussion und Testergebnissen.
+  \item Code Review findet Fehler und verteilt Wissen; kleine PRs werden besser geprüft.
+  \item CI testet automatisch, rot blockiert die Übernahme.
+  \item \cmd{--merge}, \cmd{--squash}, \cmd{--rebase}: Wichtig ist, dass ein Team sich auf eine Variante einigt.
+\end{itemize}
+\end{zusammenfassung}

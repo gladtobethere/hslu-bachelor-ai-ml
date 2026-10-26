@@ -1,0 +1,398 @@
+% ---------------------------------------------------------------------
+\chapter{Die Befehle im Einzelnen}
+\label{kap:befehle}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item für jeden Alltagsbefehl wissen, welchen Weg im mentalen Modell er geht,
+  \item jede Option eines Befehls einzeln verstehen und gezielt kombinieren,
+  \item die Ausgaben von \cmd{status}, \cmd{diff}, \cmd{log} und \cmd{push} lesen können.
+\end{itemize}
+\end{lernziele}
+
+Die Befehle sind in der Reihenfolge des Arbeitszyklus geordnet. Jeder Abschnitt beginnt mit
+dem Zweck, zerlegt dann den Befehl in seine Teile und schliesst mit Hinweisen aus der Praxis.
+
+% =====================================================================
+\befehl{git status}{den Zustand abfragen}
+
+\textbf{Zweck:} zeigt, welche Änderungen sich in welchem der vier Orte befinden. Der Befehl
+verändert nichts. Er ist der meistverwendete Git-Befehl überhaupt.
+
+\begin{lstlisting}[style=befehle]
+git status
+\end{lstlisting}
+
+\begin{lstlisting}[style=ausgabe]
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+        modified:   python/uebung01/al/aufgabe03/recursive_sum.py
+
+Changes not staged for commit:
+        modified:   README.md
+
+Untracked files:
+        notizen.txt
+\end{lstlisting}
+
+Die Ausgabe gliedert sich nach den Orten des mentalen Modells:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Abschnitt} & \textbf{Bedeutung} \\
+  \midrule
+  Changes to be committed      & in der Staging Area, kommt in den nächsten Commit (grün) \\
+  Changes not staged for commit& im Arbeitsordner geändert, aber nicht vorgemerkt (rot) \\
+  Untracked files              & neue Dateien, die Git noch nie gesehen hat (rot) \\
+  up to date with origin/main  & gleicher Stand wie beim letzten Abgleich mit GitHub \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection*{Kurzform}
+
+\begin{lstlisting}[style=befehle]
+git status -sb
+\end{lstlisting}
+
+\begin{teile}
+  -s  & \textbf{s}hort: eine Zeile pro Datei statt ganzer Sätze \\
+  -b  & \textbf{b}ranch: zeigt trotzdem die Zeile mit dem Branch \\
+\end{teile}
+
+\begin{lstlisting}[style=ausgabe]
+## main...origin/main [ahead 1]
+M  python/uebung01/al/aufgabe03/recursive_sum.py
+ M README.md
+?? notizen.txt
+\end{lstlisting}
+
+Die zwei Zeichen vor jedem Dateinamen sind zwei Spalten: Die \textbf{linke} beschreibt die
+Staging Area, die \textbf{rechte} den Arbeitsordner. \cmd{[ahead 1]} bedeutet: ein Commit
+mehr als auf GitHub.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Zeichen} & \textbf{Bedeutung} \\
+  \midrule
+  M\textvisiblespace  & geändert und vorgemerkt \\
+  \textvisiblespace M & geändert, nicht vorgemerkt \\
+  MM                  & vorgemerkt und danach erneut geändert \\
+  A\textvisiblespace  & neue Datei, vorgemerkt (\emph{added}) \\
+  D\textvisiblespace  & gelöscht, vorgemerkt (\emph{deleted}) \\
+  ??                  & unbekannte Datei (\emph{untracked}) \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{erfahrung}
+Vor jedem Commit \cmd{git status}. Die zwei Sekunden verhindern fast jeden Fall von „das
+hätte nicht mit sollen“.
+\end{erfahrung}
+
+% =====================================================================
+\befehl{git add}{Änderungen vormerken}
+
+\textbf{Zweck:} legt Änderungen aus dem Arbeitsordner in die Staging Area.
+\textbf{Weg:} Arbeitsordner $\rightarrow$ Staging Area.
+
+\begin{lstlisting}[style=befehle]
+git add python java
+\end{lstlisting}
+
+Die Argumente sind Dateien oder Ordner, \textbf{relativ zum aktuellen Ordner}. Bei einem
+Ordner werden alle Änderungen darin und in allen Unterordnern vorgemerkt.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Aufruf} & \textbf{Was vorgemerkt wird} \\
+  \midrule
+  git add datei.py & genau diese Datei \\
+  git add python   & alles unter \cmd{python/} \\
+  git add .        & alles im aktuellen Ordner und darunter; der Punkt bedeutet „hier“ \\
+  git add -A       & alle Änderungen im ganzen Repository (\emph{all}), auch gelöschte Dateien \\
+  git add -p       & interaktiv Stück für Stück (\emph{patch}); Git fragt bei jedem Abschnitt \cmd{y} oder \cmd{n} \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+Vorgemerkt werden nur \textbf{Änderungen}. Unveränderte Dateien sind bereits im letzten
+Commit enthalten und werden nicht erneut gespeichert.
+
+\begin{praxis}
+Erfahrene Entwicklerinnen und Entwickler verwenden \cmd{git add -A} zurückhaltend. Sobald
+mehrere Anliegen gleichzeitig offen sind, merken sie gezielt Pfade vor oder nutzen
+\cmd{git add -p}, um sogar innerhalb einer Datei zu trennen. So bleibt jeder Commit auf ein
+Anliegen beschränkt, was das Prüfen und spätere Rückgängigmachen erleichtert.
+\end{praxis}
+
+% =====================================================================
+\befehl{git diff}{Unterschiede anzeigen}
+
+\textbf{Zweck:} zeigt Zeile für Zeile, was sich zwischen zwei Ständen unterscheidet
+(\emph{diff} von \emph{difference}). Welche zwei Stände verglichen werden, hängt von den
+Optionen ab:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Aufruf} & \textbf{vergleicht} & \textbf{beantwortet die Frage} \\
+  \midrule
+  git diff          & Arbeitsordner $\leftrightarrow$ Staging Area & Was habe ich geändert, aber noch nicht vorgemerkt? \\
+  git diff --cached & Staging Area $\leftrightarrow$ letzter Commit & Was kommt in den nächsten Commit? \\
+  git diff HEAD     & Arbeitsordner $\leftrightarrow$ letzter Commit & Was ist insgesamt seit dem letzten Commit anders? \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{hintergrund}
+\cmd{--cached} heisst so, weil die Staging Area in Git intern früher \emph{cache} genannt
+wurde. Da der Name verwirrend ist, gibt es seit einigen Jahren das gleichbedeutende
+\cmd{--staged}.
+\end{hintergrund}
+
+\subsection*{Die Ausgabe lesen}
+
+\begin{lstlisting}[style=ausgabe]
+--- a/recursive_sum.py
++++ b/recursive_sum.py
+@@ -3,4 +3,6 @@
+ def recursive_sum(n):
+-    pass
++    if n == 0:
++        return 0
++    return n + recursive_sum(n - 1)
+\end{lstlisting}
+
+\begin{itemize}
+  \item \cmd{---} kennzeichnet die alte Fassung (a), \cmd{+++} die neue (b).
+  \item \cmd{@@ -3,4 +3,6 @@} bedeutet: Der Ausschnitt beginnt in Zeile 3; vorher umfasste er
+        4 Zeilen, jetzt 6.
+  \item Zeilen mit \cmd{-} wurden entfernt, Zeilen mit \cmd{+} hinzugefügt. Zeilen ohne
+        Zeichen sind unverändert und dienen der Orientierung.
+  \item Lange Ausgaben zeigt Git seitenweise: Leertaste blättert weiter, \cmd{q} beendet.
+\end{itemize}
+
+\subsection*{Nur die Übersicht: \texorpdfstring{\cmd{--stat}}{--stat}}
+
+\begin{lstlisting}[style=befehle]
+git diff --cached --stat
+\end{lstlisting}
+
+\begin{lstlisting}[style=ausgabe]
+ java/uebung01/as/aufgabe03/RecursiveSum.java  | 12 +++++++---
+ python/uebung01/al/aufgabe03/recursive_sum.py |  5 +++--
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+\end{lstlisting}
+
+\cmd{--stat} (\emph{statistics}) zeigt pro Datei nur die Anzahl geänderter Zeilen und das
+Verhältnis von hinzugefügten (\cmd{+}) zu entfernten (\cmd{-}) Zeilen.
+
+Die beiden Optionen sind voneinander unabhängig: \cmd{--cached} bestimmt, \textbf{was}
+verglichen wird, \cmd{--stat}, \textbf{wie} es dargestellt wird. Am besten probiert man sie
+einzeln aus:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Aufruf} & \textbf{Ergebnis} \\
+  \midrule
+  git diff                      & Details, nur nicht Vorgemerktes \\
+  git diff --stat               & Übersicht, nur nicht Vorgemerktes \\
+  git diff --cached             & Details, nur Vorgemerktes \\
+  git diff --cached --stat      & Übersicht, nur Vorgemerktes \\
+  git diff --cached --name-only & nur die Dateinamen \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% =====================================================================
+\befehl{git restore}{Änderungen zurücknehmen}
+
+\textbf{Zweck:} holt Dateien aus der Staging Area zurück oder verwirft Änderungen.
+\textbf{Weg:} Staging Area $\rightarrow$ Arbeitsordner.
+
+\begin{lstlisting}[style=befehle]
+git restore --staged datei.py          # aus der Vormerkung nehmen, Datei bleibt
+git restore datei.py                   # Änderungen an der Datei verwerfen
+\end{lstlisting}
+
+\begin{teile}
+  --staged & nur die Vormerkung aufheben; der Inhalt der Datei bleibt unverändert \\
+  (ohne)   & die Datei im Arbeitsordner auf den letzten Commit zurücksetzen \\
+\end{teile}
+
+\begin{achtung}
+\cmd{git restore datei.py} \emph{ohne} \cmd{--staged} löscht alle nicht committeten
+Änderungen an dieser Datei endgültig. Es gibt keinen Papierkorb. Vorher mit
+\cmd{git diff datei.py} prüfen, was verloren ginge.
+\end{achtung}
+
+% =====================================================================
+\befehl{git commit}{einen Zwischenstand speichern}
+
+\textbf{Zweck:} speichert alles Vorgemerkte als neuen Commit.
+\textbf{Weg:} Staging Area $\rightarrow$ lokales Repository.
+
+\begin{lstlisting}[style=befehle]
+git commit -m "ADS U01: rekursive Summe implementiert"
+\end{lstlisting}
+
+\begin{teile}
+  -m & \textbf{m}essage: die Beschreibung direkt angeben; ohne \cmd{-m} öffnet sich ein Texteditor \\
+\end{teile}
+
+Der Commit existiert danach nur \textbf{lokal}. GitHub erfährt erst beim Push davon. Wie man
+gute Nachrichten schreibt, behandelt Kapitel~\ref{kap:commits}.
+
+% =====================================================================
+\befehl{git log}{die Geschichte ansehen}
+
+\textbf{Zweck:} listet die Commits auf, den neuesten zuerst.
+
+\begin{lstlisting}[style=befehle]
+git log --oneline --graph --all -10
+\end{lstlisting}
+
+\begin{teile}
+  --oneline & eine Zeile pro Commit: kurzer Hash und erste Zeile der Nachricht \\
+  --graph   & zeichnet die Verzweigungen der Branches als Linien \\
+  --all     & alle Branches statt nur des aktuellen \\
+  -10       & nur die letzten zehn Commits \\
+\end{teile}
+
+\begin{lstlisting}[style=ausgabe]
+*   3b1a03a Merge pull request #1 from gladtobethere/ads
+|\
+| * db753be ADS: Uebungen U01-U06
+|/
+* 19ce440 ADS-Uebungsordner anlegen
+\end{lstlisting}
+
+Die Grafik zeigt: Auf einem Branch entstand \cmd{db753be}, der danach mit einem
+Merge-Commit (\cmd{3b1a03a}) in \cmd{main} übernommen wurde.
+
+% =====================================================================
+\befehl{git switch}{Branch wechseln oder anlegen}
+
+\textbf{Zweck:} wechselt den aktuellen Branch, HEAD wandert mit.
+
+\begin{lstlisting}[style=befehle]
+git switch main                        # auf bestehenden Branch wechseln
+git switch -c ads                      # neuen Branch anlegen und wechseln
+\end{lstlisting}
+
+\begin{teile}
+  -c & \textbf{c}reate: den Branch zuerst anlegen, ausgehend vom aktuellen Commit \\
+\end{teile}
+
+Nicht committete Änderungen wandern beim Anlegen eines neuen Branches mit. Wer versehentlich
+auf \cmd{main} gearbeitet hat, rettet die Arbeit deshalb einfach mit \cmd{git switch -c <name>}.
+
+\begin{hintergrund}
+\cmd{git switch} gibt es seit 2019. Ältere Anleitungen verwenden \cmd{git checkout -b ads}.
+Das bewirkt dasselbe; \cmd{checkout} wurde aufgeteilt, weil es zu viele verschiedene
+Aufgaben hatte.
+\end{hintergrund}
+
+% =====================================================================
+\befehl{git branch}{Branches auflisten und löschen}
+
+\begin{lstlisting}[style=befehle]
+git branch                             # lokale Branches; * markiert den aktuellen
+git branch -a                          # auch die Branches auf GitHub (all)
+git branch -d ads                      # löschen (delete), nur wenn bereits übernommen
+\end{lstlisting}
+
+\cmd{-d} ist bewusst vorsichtig und verweigert das Löschen eines Branches, dessen Arbeit
+noch nicht übernommen wurde. Das grosse \cmd{-D} erzwingt es und kann Arbeit kosten.
+
+% =====================================================================
+\befehl{git push}{Commits hochladen}
+
+\textbf{Zweck:} schickt lokale Commits zum Remote.
+\textbf{Weg:} lokales Repository $\rightarrow$ GitHub.
+
+\begin{lstlisting}[style=befehle]
+git push -u origin ads
+\end{lstlisting}
+
+\begin{teile}
+  origin & das Ziel: der Name, unter dem GitHub als Remote eingetragen ist \\
+  ads    & der Branch, der hochgeladen wird \\
+  -u     & kurz für \cmd{--set-upstream}: verknüpft den lokalen Branch dauerhaft mit dem auf GitHub \\
+\end{teile}
+
+Nach dem ersten Push mit \cmd{-u} genügt \cmd{git push} ohne weitere Angaben. Hochgeladen
+werden ausschliesslich \textbf{Commits}; Vorgemerktes und Ungespeichertes bleibt lokal.
+
+\subsection*{Die Ausgabe lesen}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash\ttfamily\small}p{5.6cm}>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\normalsize\textbf{Zeile} & \textbf{Bedeutung} \\
+  \midrule
+  Enumerating objects: 35 & Git ermittelt, welche gespeicherten Objekte zum Branch gehören \\
+  Delta compression using up to 12 threads & überträgt nur Unterschiede statt ganzer Dateien, verteilt auf die Prozessorkerne \\
+  Writing objects: 100\% (18/18), 2.29 KiB & tatsächlich übertragen: 18 Objekte, 2,29\,KB \\
+  remote: \ldots & Zeilen mit \cmd{remote:} stammen von GitHub, nicht vom eigenen Computer \\
+  {*} [new branch] ads -> ads & der Branch existiert jetzt auch auf GitHub \\
+  branch \textquotesingle{}ads\textquotesingle{} set up to track \textquotesingle{}origin/ads\textquotesingle{} & Wirkung von \cmd{-u}: lokal und GitHub sind verknüpft \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% =====================================================================
+\section{\texorpdfstring{\cmd{git fetch} und \cmd{git pull}}{git fetch und git pull}: Änderungen holen}
+
+\textbf{Zweck:} holt Commits vom Remote.
+\textbf{Weg:} GitHub $\rightarrow$ lokales Repository (und Arbeitsordner).
+
+\begin{lstlisting}[style=befehle]
+git fetch                              # nur herunterladen, nichts verändern
+git pull                               # herunterladen und einbauen
+\end{lstlisting}
+
+\cmd{git pull} besteht aus zwei Schritten: Zuerst \cmd{git fetch}, das die neuen Commits
+herunterlädt und \cmd{origin/main} aktualisiert, ohne die eigenen Dateien anzurühren. Danach
+\cmd{git merge}, das die neuen Commits in den aktuellen Branch einbaut.
+
+\begin{erfahrung}
+\cmd{git fetch} ist immer ungefährlich. Wer unsicher ist, holt zuerst mit \cmd{fetch} und
+schaut mit \cmd{git status}, ob der eigene Branch vor (\emph{ahead}) oder hinter
+(\emph{behind}) GitHub liegt, bevor er mit \cmd{pull} etwas verändert.
+\end{erfahrung}
+
+% =====================================================================
+\befehl{git stash}{Arbeit kurz beiseitelegen}
+
+\textbf{Zweck:} räumt nicht committete Änderungen vorübergehend weg, damit der Arbeitsordner
+sauber ist, zum Beispiel um kurz den Branch zu wechseln.
+
+\begin{lstlisting}[style=befehle]
+git stash                              # Änderungen beiseitelegen
+git switch main                        # etwas anderes erledigen
+git switch ads
+git stash pop                          # Änderungen zurückholen
+\end{lstlisting}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item \cmd{status} und \cmd{diff} zeigen, verändern aber nichts.
+  \item \cmd{add}, \cmd{commit}, \cmd{push} bewegen Änderungen nach rechts im Modell,
+        \cmd{restore} und \cmd{pull} nach links.
+  \item Optionen sind unabhängige Bausteine: einzeln ausprobieren, dann kombinieren.
+\end{itemize}
+\end{zusammenfassung}

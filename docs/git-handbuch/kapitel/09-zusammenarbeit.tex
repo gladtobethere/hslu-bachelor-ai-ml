@@ -1,0 +1,152 @@
+% ---------------------------------------------------------------------
+\chapter{Zusammenarbeit und Konflikte}
+\label{kap:zusammenarbeit}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item mit mehreren Geräten oder Personen am selben Repository arbeiten,
+  \item verstehen, wie ein Konflikt entsteht,
+  \item einen Konflikt Schritt für Schritt auflösen,
+  \item Konflikte durch Arbeitsgewohnheiten vermeiden.
+\end{itemize}
+\end{lernziele}
+
+\section{Mehrere Geräte, ein Repository}
+
+PC und Laptop besitzen je einen eigenen Klon. Sie wissen nichts voneinander; verbunden sind
+sie nur über GitHub:
+
+\begin{center}
+\begin{tikzpicture}[
+    geraet/.style={draw=hsluBlau, fill=hsluBlau!6, rounded corners=3pt, thick,
+                   minimum width=2.6cm, minimum height=1cm, font=\small\bfseries},
+    weg/.style={-{Stealth[length=2.5mm]}, thick},
+    lab/.style={font=\ttfamily\footnotesize, fill=white, inner sep=1pt}
+  ]
+  \node[geraet] (pc) at (0,0)    {PC};
+  \node[geraet] (gh) at (5,0)    {GitHub};
+  \node[geraet] (lt) at (10,0)   {Laptop};
+  \draw[weg] ([yshift=2.5mm]pc.east)  -- node[lab, above=1mm] {push} ([yshift=2.5mm]gh.west);
+  \draw[weg] ([yshift=-2.5mm]gh.west) -- node[lab, below=1mm] {pull} ([yshift=-2.5mm]pc.east);
+  \draw[weg] ([yshift=2.5mm]gh.east)  -- node[lab, above=1mm] {pull} ([yshift=2.5mm]lt.west);
+  \draw[weg] ([yshift=-2.5mm]lt.west) -- node[lab, below=1mm] {push} ([yshift=-2.5mm]gh.east);
+\end{tikzpicture}
+\end{center}
+
+Mehrere Personen funktionieren genauso, nur dass auf jedem Gerät jemand anderes arbeitet.
+Daraus folgt eine einfache Regel:
+
+\begin{merke}
+\textbf{Zu Beginn \cmd{git pull}, am Ende committen, pushen, mergen.} Wer das einhält, hat
+auf allen Geräten denselben Stand und erlebt Konflikte nur noch selten.
+\end{merke}
+
+\subsection*{Was Git überträgt und was nicht}
+
+\begin{itemize}
+  \item \textbf{Mit Git übertragen} wird alles, was im Repository committet ist, auch
+        Einstellungen wie \cmd{.vscode/settings.json} und Skripte wie \cmd{setup/einrichten.ps1}.
+  \item \textbf{Nicht übertragen} werden installierte Programme, Anmeldungen wie die von
+        \cmd{gh} und alles, was in \cmd{.gitignore} steht.
+\end{itemize}
+
+Darum enthält dieses Repository ein Einrichtungs-Skript. Auf jedem neuen Gerät genügt nach
+dem Klonen ein Befehl:
+
+\begin{lstlisting}[style=befehle]
+powershell -ExecutionPolicy Bypass -File setup\einrichten.ps1
+\end{lstlisting}
+
+\begin{teile}
+  powershell              & startet eine neue PowerShell, die das Skript ausführt \\
+  -ExecutionPolicy Bypass & erlaubt Skripte nur für diesen Aufruf; Windows blockiert sie sonst standardmässig \\
+  -File                   & die auszuführende Skript-Datei \\
+\end{teile}
+
+\begin{praxis}
+Dieses Vorgehen ist in Firmen Standard und heisst oft \emph{Onboarding-Skript}: Wer neu
+ins Team kommt, klont das Repository, startet ein Skript und kann am selben Tag
+produktiv arbeiten. Was ein Gerät braucht, steht als Code im Repository statt in den
+Köpfen einzelner Personen.
+\end{praxis}
+
+\section{Wie ein Konflikt entsteht}
+
+Git führt Änderungen meist selbstständig zusammen, auch wenn zwei Personen dieselbe Datei
+bearbeitet haben, solange es \emph{verschiedene Stellen} sind. Ein \begriff{Konflikt}
+entsteht nur, wenn \textbf{dieselbe Stelle} auf zwei Wegen unterschiedlich geändert wurde.
+Git kann dann nicht wissen, welche Fassung richtig ist, und fragt den Menschen.
+
+Typisches Beispiel mit zwei Geräten:
+
+\begin{enumerate}
+  \item Am PC wird in \cmd{README.md} Zeile 5 geändert und gepusht.
+  \item Am Laptop wurde vorher \emph{kein} \cmd{git pull} gemacht. Dort wird dieselbe Zeile
+        anders geändert und committet.
+  \item \cmd{git pull} am Laptop meldet: \cmd{CONFLICT (content): Merge conflict in README.md}.
+\end{enumerate}
+
+\section{Einen Konflikt auflösen}
+
+Git markiert die betroffene Stelle direkt in der Datei:
+
+\begin{lstlisting}[style=ausgabe]
+<<<<<<< HEAD
+Wöchentlich zwei Übungen lösen.
+=======
+Täglich eine Übung lösen.
+>>>>>>> 7f02c1a (README: Lernrhythmus angepasst)
+\end{lstlisting}
+
+\begin{teile}
+  <<<<<<< HEAD    & Beginn der eigenen Fassung, also des aktuellen Stands (hier: Laptop) \\
+  =======         & Trennlinie zwischen den beiden Fassungen \\
+  >>>>>>> 7f02c1a & Ende der anderen Fassung; dahinter Hash und Nachricht des Commits, der von GitHub kam \\
+\end{teile}
+
+Vorgehen in vier Schritten:
+
+\begin{enumerate}
+  \item Datei öffnen und die Stelle suchen. VS Code hebt sie farbig hervor und bietet
+        Schaltflächen wie \emph{Accept Current} oder \emph{Accept Incoming}.
+  \item Die gewünschte Endfassung herstellen: eine der beiden behalten oder beide
+        sinnvoll kombinieren.
+  \item \textbf{Alle Markierungszeilen} (\cmd{<<<<<<<}, \cmd{=======}, \cmd{>>>>>>>}) entfernen.
+  \item Den aufgelösten Stand speichern und abschliessen:
+\end{enumerate}
+
+\begin{lstlisting}[style=befehle]
+git add README.md                      # "Konflikt ist gelöst" melden
+git commit -m "Konflikt in README aufgelöst"
+git push
+\end{lstlisting}
+
+\begin{fehler}
+Markierungszeilen werden übersehen und mitcommittet. Danach steht \cmd{<<<<<<< HEAD} im Code,
+und das Programm startet nicht mehr. Vor dem \cmd{git add} darum die Datei nach
+\cmd{<<<<<<<} durchsuchen (Strg+F).
+\end{fehler}
+
+\begin{erfahrung}
+Ein Konflikt ist kein Fehler und nichts Gefährliches. Git hat nichts verloren, es fragt
+lediglich nach. Wer unsicher ist, kann den Vorgang jederzeit mit \cmd{git merge --abort}
+abbrechen; danach ist alles wie vor dem \cmd{pull}.
+\end{erfahrung}
+
+\section{Konflikte vermeiden}
+
+\begin{itemize}
+  \item Vor Arbeitsbeginn \cmd{git pull}.
+  \item Häufig pushen, statt tagelang lokal zu sammeln.
+  \item Kurzlebige Branches: je kürzer ein Branch lebt, desto weniger weicht er von \cmd{main} ab.
+  \item Im Team absprechen, wer an welchen Dateien arbeitet.
+\end{itemize}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Geräte und Personen sind nur über GitHub verbunden: am Anfang \cmd{pull}, am Ende \cmd{push}.
+  \item Ein Konflikt entsteht nur, wenn dieselbe Stelle unterschiedlich geändert wurde.
+  \item Auflösen: Stelle bereinigen, Markierungen löschen, \cmd{add}, \cmd{commit}, \cmd{push}.
+  \item \cmd{git merge --abort} bricht ab und stellt den vorherigen Zustand wieder her.
+\end{itemize}
+\end{zusammenfassung}

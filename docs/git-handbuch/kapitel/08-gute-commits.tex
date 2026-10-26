@@ -1,0 +1,132 @@
+% ---------------------------------------------------------------------
+\chapter{Gute Commits}
+\label{kap:commits}
+
+\begin{lernziele}
+\begin{itemize}[nosep]
+  \item wissen, wie gross ein Commit sein sollte und warum,
+  \item Commit-Nachrichten nach gängiger Industrie-Konvention schreiben,
+  \item die Konvention \emph{Conventional Commits} kennen.
+\end{itemize}
+\end{lernziele}
+
+\section{Warum die Qualität von Commits zählt}
+
+Ein Commit wird einmal geschrieben, aber oft gelesen: beim Review, bei der Fehlersuche
+Monate später, von neuen Teammitgliedern. Die Geschichte eines Projekts ist seine
+Dokumentation über das \emph{Warum}. Der Code zeigt, \emph{was} das Programm tut. Nur die
+Commits erklären, \emph{weshalb} es so geworden ist.
+
+\section{Ein Anliegen pro Commit}
+
+\begin{definition}{Atomarer Commit}
+Ein \begriff{atomarer Commit} enthält genau ein abgeschlossenes Anliegen, zum Beispiel eine
+Funktion, eine Fehlerbehebung oder eine Umbenennung. Er lässt sich für sich allein
+verstehen, prüfen und bei Bedarf rückgängig machen.
+\end{definition}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \textbf{Ungünstig} & \textbf{Besser} \\
+  \midrule
+  ein Commit „Abend 3“ mit Stack, Queue, Tippfehler in der README und neuer Ordnerstruktur
+  & vier Commits: Stack, Queue, README korrigiert, Ordnerstruktur \\
+  ein Commit pro gespeicherter Datei, auch halbfertig
+  & ein Commit, sobald ein Teil funktioniert \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+Stellt sich eine Woche später heraus, dass die Queue fehlerhaft ist, lässt sich im
+zweiten Fall genau dieser eine Commit rückgängig machen, ohne Stack und README anzurühren.
+
+\section{Die Commit-Nachricht}
+
+Über Jahre hat sich ein Format etabliert, das von Werkzeugen wie GitHub und \cmd{git log}
+optimal dargestellt wird:
+
+\begin{lstlisting}[style=ausgabe]
+ADS U02: Stack mit verketteter Liste implementiert
+
+Der Array-Stack musste bei jeder Vergrösserung umkopieren. Die
+verkettete Liste wächst pro Element in konstanter Zeit, was bei
+unbekannter Datenmenge planbarer ist.
+\end{lstlisting}
+
+\begin{description}[style=nextline, leftmargin=1.2cm]
+  \item[Betreffzeile] höchstens etwa 50 bis 70 Zeichen, beschreibt \emph{was} der Commit
+    bewirkt. Sie erscheint in \cmd{git log --oneline} und als Titel auf GitHub.
+  \item[Leerzeile] trennt Betreff und Text. Werkzeuge erkennen daran die Betreffzeile.
+  \item[Text (optional)] erklärt \emph{warum}, wenn es nicht offensichtlich ist.
+    Zeilen nach etwa 72 Zeichen umbrechen.
+\end{description}
+
+Mehrzeilige Nachrichten lassen sich auch ohne Editor schreiben: Jedes weitere \cmd{-m}
+wird zu einem eigenen Absatz.
+
+\begin{lstlisting}[style=befehle]
+git commit -m "ADS U02: Stack mit verketteter Liste implementiert" -m "Der Array-Stack ..."
+\end{lstlisting}
+
+\subsection*{Gute und schlechte Beispiele}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X@{}}
+  \toprule
+  \normalfont\textbf{Nachricht} & \textbf{Beurteilung} \\
+  \midrule
+  update            & sagt nichts; was wurde aktualisiert, und warum? \\
+  fix               & welcher Fehler? \\
+  asdf              & leider häufig, völlig wertlos \\
+  Änderungen        & beschreibt jeden denkbaren Commit \\
+  \midrule
+  LIAL SW03: LR-Zerlegung mit Pivotsuche     & klar, auffindbar, mit Bereich \\
+  Spickzettel ADS: Heap-Operationen ergänzt  & klar, was und wo \\
+  README: Einrichtung für Windows beschrieben & klar \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Conventional Commits}
+
+Viele Open-Source-Projekte und Firmen verwenden die Konvention \begriff{Conventional
+Commits}. Jede Betreffzeile beginnt mit einem Typ:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}>{\ttfamily}l>{\raggedright\arraybackslash}X>{\ttfamily}l@{}}
+  \toprule
+  \normalfont\textbf{Typ} & \textbf{Bedeutung} & \normalfont\textbf{Beispiel} \\
+  \midrule
+  feat:     & neue Funktion          & feat: Export als CSV \\
+  fix:      & Fehlerbehebung         & fix: Absturz bei leerer Liste \\
+  docs:     & nur Dokumentation      & docs: Git-Handbuch Kapitel 9 \\
+  refactor: & Umbau ohne neues Verhalten & refactor: Stack in eigene Klasse \\
+  test:     & nur Tests              & test: Randfälle für Heap \\
+  chore:    & Wartung, Konfiguration & chore: .gitignore ergänzt \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{praxis}
+Der Typ ist mehr als Ordnung: Werkzeuge lesen ihn automatisch aus. Aus allen
+\cmd{feat:}- und \cmd{fix:}-Commits entstehen so die Versionshinweise einer neuen
+Software-Version, ohne dass jemand sie von Hand schreibt.
+\end{praxis}
+
+\begin{erfahrung}
+Ein guter Test für jede Commit-Nachricht: Ergibt der Satz „Wenn man diesen Commit
+übernimmt, dann wird \ldots“ mit der Betreffzeile einen sinnvollen Satz? „\ldots{} dann wird
+der Stack mit verketteter Liste implementiert“: ja. „\ldots{} dann wird update“: nein.
+\end{erfahrung}
+
+\begin{zusammenfassung}
+\begin{itemize}[nosep]
+  \item Ein Commit, ein Anliegen. Kleine Commits lassen sich prüfen und gezielt rückgängig machen.
+  \item Betreffzeile kurz und konkret, Leerzeile, dann bei Bedarf das Warum.
+  \item Conventional Commits (\cmd{feat:}, \cmd{fix:}, \ldots) ist ein verbreiteter Standard.
+\end{itemize}
+\end{zusammenfassung}

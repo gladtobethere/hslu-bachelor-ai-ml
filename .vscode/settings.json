@@ -1,0 +1,23 @@
+// Einstellungen für dieses Repository. Sie gelten auf jedem Gerät, das das Repo öffnet,
+// weil sie mit Git mitkommen. Gerätespezifisches (Pfade, Benutzername) gehört nicht hierher.
+{
+    // LaTeX: PDF und Hilfsdateien in den Unterordner build/ (steht in .gitignore)
+    "latex-workshop.latex.outDir": "%DIR%/build",
+    // beim Speichern automatisch neu bauen
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    // Vorschau als Tab in VS Code statt im Browser
+    "latex-workshop.view.pdf.viewer": "tab",
+
+    // Rechtschreibprüfung auf Deutsch (Schweiz, also "ss" statt "ß")
+    "ltex.language": "de-CH",
+
+    // Python und Jupyter: immer die Projekt-Umgebung .venv verwenden (legt setup\einrichten.ps1 an)
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+
+    // Python: Ruff prüft und formatiert beim Speichern
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    }
+}
