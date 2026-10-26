@@ -4,51 +4,78 @@
 
 \section*{Wochenziele}
 \begin{wochenziele}
-  \ziel{boolean, integer, float}{Mit den Grundtypen rechnen, Prioritäten von \texttt{not}, \texttt{and}, \texttt{or} beachten.}
-  \ziel{Binärdarstellung}{integer und float ins Binärsystem umrechnen, periodische Brüche erkennen.}
-  \ziel{IEEE 754}{float-Werte als 32-bit und 64-bit Fliesskommazahl angeben.}
-  \ziel{set, list, matrix}{Mengenoperationen, komponentenweises Rechnen und Broadcasting anwenden.}
-  \ziel{Funktion}{Den Begriff Funktion und Algorithmus erklären.}
+  \ziel{boolean}{Ausdrücke mit \texttt{not}, \texttt{and}, \texttt{or} sicher und in der richtigen Reihenfolge auswerten.}
+  \ziel{integer}{\texttt{//} und \texttt{\%} anwenden, ganze Zahlen ins Binärsystem umrechnen.}
+  \ziel{float}{Periodische Zahlen als Bruch schreiben, Nachkommastellen binär darstellen.}
+  \ziel{IEEE 754}{Zahlen als 32- und 64-bit Fliesskommazahl codieren und zurückrechnen.}
+  \ziel{set, list, matrix}{Mengen verknüpfen, komponentenweise rechnen, Broadcasting anwenden.}
+  \ziel{Funktion}{Erkennen, ob eine Zuordnung eine Funktion ist, und einen Algorithmus nachverfolgen.}
 \end{wochenziele}
 
-\section{Kernideen}
-Alle Daten im Computer sind Folgen von \textbf{Bits}. Daraus baut man die
-Grundtypen: \textbf{boolean} (wahr/falsch), \textbf{integer} (ganze Zahlen) und
-\textbf{float} (Kommazahlen mit endlich vielen Stellen). Mehrere Objekte fasst man
-zu \textbf{Mengen} (ungeordnet), \textbf{Listen} (geordnet) und \textbf{Matrizen}
-(zweidimensional) zusammen. Eine \textbf{Funktion} ordnet jedem Input genau einen
-Output zu, ein \textbf{Algorithmus} beschreibt, wie man ihn berechnet.
+\section{Das grosse Bild}
+Ein Computer kennt nur zwei Zustände: Strom oder kein Strom. Alles andere ist
+\textbf{Interpretation} dieser Zustände. Die Bitfolge \texttt{01000001} kann je nach
+Datentyp die Zahl 65, den Buchstaben \texttt{A} oder acht Wahrheitswerte bedeuten.
+Ein Datentyp legt also fest, \textbf{wie man Bits liest} und \textbf{welche Operationen}
+erlaubt sind.
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{@{}l l l X@{}}
+    \toprule
+    Typ & Mathematik & Python & Kernfrage \\
+    \midrule
+    boolean & $\{T, F\}$ & \texttt{bool} & In welcher Reihenfolge wird ausgewertet? \\
+    integer & $\Z$ & \texttt{int} & Wie sieht die Zahl binär aus? \\
+    float & $\subset \mathbb{Q}$ (endlich viele Stellen) & \texttt{float} & Was geht beim Speichern verloren? \\
+    set & $\{\ldots\}$ & \texttt{set} & Ungeordnet, keine Duplikate \\
+    list & $(\ldots)$ & \texttt{list} & Geordnet, Duplikate erlaubt \\
+    matrix & $m \times n$ Tabelle & NumPy \texttt{array} & Passen die Dimensionen? \\
+    function & $f\colon D \to W$ & \texttt{def} & Gibt es zu jedem Input genau einen Output? \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
 
 % =====================================================================
 \section{Bit und Boolean}
 
-\begin{definition}{Bit}
-  Die kleinste Einheit von Daten. Ein Bit kann genau \textbf{zwei} verschiedene
-  Werte annehmen. Je nach Sichtweise:
-  \texttt{1} und \texttt{0}, \texttt{Ein} und \texttt{Aus}, \texttt{Ja} und
-  \texttt{Nein}, \texttt{Wahr} und \texttt{Falsch}.
-\end{definition}
+\subsection*{Bit: die kleinste Informationseinheit}
+Ein \textbf{Bit} ist eine Stelle, die genau \textbf{zwei} Zustände haben kann.
+Wie man diese zwei Zustände nennt, hängt vom Zusammenhang ab:
 
-\begin{definition}{Boolescher Wert (boolean)}
-  Ein boolescher Wert ist entweder \texttt{True} oder \texttt{False}.
-  Ein Boolean ist also ein Bit, das man als \enquote{Wahr/Falsch} liest:
+\begin{center}
+  \begin{tabular}{lcccc}
+    \toprule
+    Sichtweise & Zahl & Schalter & Antwort & Logik \\
+    \midrule
+    Zustand 1 & \texttt{1} & Ein & Ja & Wahr \\
+    Zustand 2 & \texttt{0} & Aus & Nein & Falsch \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+\begin{merke}
+  Mit $n$ Bits gibt es $\mathbf{2^n}$ verschiedene Kombinationen:
+  1 Bit $\to$ 2, \; 3 Bit $\to$ 8, \; 8 Bit (1 Byte) $\to$ 256.
+  Diese Zahl $2^n$ taucht bei den Teilmengen (Abschnitt~\ref{sec:01-mengen}) wieder auf.
+\end{merke}
+
+\subsection*{Boolean: ein Bit, als Wahr/Falsch gelesen}
+\begin{definition}{Boolescher Wert}
+  Ein Boolean hat genau einen von zwei Werten: \texttt{True} oder \texttt{False}.
+  Er ist ein Bit in der Logik-Sichtweise:
   \[
-    \texttt{1} \;\widehat{=}\; \texttt{True} \;(T), \qquad
-    \texttt{0} \;\widehat{=}\; \texttt{False} \;(F).
+    \texttt{True} \;\widehat{=}\; 1, \qquad \texttt{False} \;\widehat{=}\; 0.
   \]
-  Benannt nach George Boole (1815--1864), der als Erster 1 für True und 0 für
-  False verwendet hat.
+  Der Name kommt vom Mathematiker George Boole, der Logik mit den Zahlen 1 und 0
+  rechenbar gemacht hat.
 \end{definition}
 
-\begin{beispiel}{Boolean in Python}
 \begin{lstlisting}[language=Python]
-True == 1        # True:  True verhält sich wie 1
-False == 0       # True:  False verhält sich wie 0
-True + True      # 2
-bool(0)          # False: nur 0 ist False ...
-bool(5)          # True:  ... jede andere Zahl ist True
+True == 1, False == 0     # (True, True): Python behandelt sie wie 1 und 0
+True + True + False       # 2, man kann also "Wahre zählen"
+bool(0), bool(-3)         # (False, True): nur 0 ist falsch
 \end{lstlisting}
-\end{beispiel}
 
 \subsection*{Einstellige und zweistellige Operatoren}
 \begin{itemize}
@@ -60,475 +87,593 @@ bool(5)          # True:  ... jede andere Zahl ist True
 \textbf{Fachlich entscheidend:} Die Einstelligkeit bzw.\ Zweistelligkeit
 beschreibt die Anzahl der Operanden, auf die ein Operator angewendet wird.
 
-\subsection*{Wahrheitstabelle}
+\subsection*{Die drei Operatoren, als Rechnung mit 0 und 1}
+Statt die Tabelle auswendig zu lernen, kann man mit 0 und 1 \textbf{rechnen}:
+
 \begin{center}
   \renewcommand{\arraystretch}{1.2}
-  \begin{tabular}{cc|c|cc}
+  \begin{tabular}{cc|c|c|c}
     \toprule
-    $a$ & $b$ & \texttt{not} $a$ & $a$ \texttt{and} $b$ & $a$ \texttt{or} $b$ \\
+    $a$ & $b$ & \texttt{not} $a$ \;$= 1 - a$ & $a$ \texttt{and} $b$ \;$= a \cdot b$ & $a$ \texttt{or} $b$ \;$= \max(a, b)$ \\
     \midrule
-    T & T & F & T & T \\
-    T & F & F & F & T \\
-    F & T & T & F & T \\
-    F & F & T & F & F \\
+    1 & 1 & 0 & 1 & 1 \\
+    1 & 0 & 0 & 0 & 1 \\
+    0 & 1 & 1 & 0 & 1 \\
+    0 & 0 & 1 & 0 & 0 \\
     \bottomrule
   \end{tabular}
 \end{center}
 
 \begin{merke}
   \begin{itemize}[nosep]
-    \item \texttt{not} dreht den Wert um.
-    \item \texttt{and} ist \textbf{nur T}, wenn \textbf{beide} Operanden T sind.
-    \item \texttt{or} ist \textbf{nur F}, wenn \textbf{beide} Operanden F sind.
+    \item \texttt{and} ist streng: \textbf{ein} F macht alles F (wie eine Multiplikation mit 0).
+    \item \texttt{or} ist grosszügig: \textbf{ein} T macht alles T.
+    \item \textbf{Eselsbrücke \enquote{Punkt vor Strich}:} \texttt{and} verhält sich wie $\cdot$,
+          \texttt{or} wie $+$, \texttt{not} wie ein Minuszeichen vor einer Zahl.
+          Darum gilt dieselbe Reihenfolge: \textbf{not $\to$ and $\to$ or}.
   \end{itemize}
 \end{merke}
 
 \subsection*{Auswertungsreihenfolge}
-\begin{enumerate}
-  \item \textbf{Klammern} immer zuerst (innerste zuerst).
-  \item \textbf{Priorität:} zuerst \texttt{not}, dann \texttt{and}, zuletzt \texttt{or}.
-  \item Gleiche Operatoren von \textbf{links nach rechts} (Linksassoziativität).
-  \item Ausnahme: \texttt{not not $x$} wird von \textbf{rechts} her gelesen
-        (das innere \texttt{not} zuerst), also \texttt{not(not $x$)}.
+\begin{enumerate}[nosep]
+  \item Klammern, die innerste zuerst.
+  \item \texttt{not}, dann \texttt{and}, dann \texttt{or}.
+  \item Bei gleichen Operatoren von links nach rechts. Ein \texttt{not not $x$}
+        wird von innen nach aussen gelesen: \texttt{not(not $x$)}.
 \end{enumerate}
 
-\begin{beispiel}{Serie 1, Aufgabe 1a}
-  \texttt{False or True and False and True or False}\\
-  $= F \text{ or } \underline{T \text{ and } F} \text{ and } T \text{ or } F$
-  \quad (\texttt{and} zuerst, von links)\\
-  $= F \text{ or } \underline{F \text{ and } T} \text{ or } F$\\
-  $= \underline{F \text{ or } F} \text{ or } F = F \text{ or } F = \mathbf{F}$
+\begin{beispiel}{Warum die Reihenfolge zählt}
+  \texttt{True or False and False}\\[2pt]
+  \textbf{Richtig} (\texttt{and} zuerst): $T \text{ or } \underline{F \text{ and } F} = T \text{ or } F = \mathbf{T}$\\
+  \textbf{Falsch} (stur von links): $\underline{T \text{ or } F} \text{ and } F = T \text{ and } F = F$\\[2pt]
+  Gleicher Ausdruck, anderes Ergebnis. Genau das wird in der Prüfung getestet.
 \end{beispiel}
 
-\begin{beispiel}{Serie 1, Aufgabe 1c}
-  \texttt{not False or not not True and False or not True}\\
-  $= T \text{ or } \underline{\text{not not } T} \text{ and } F \text{ or } F$
-  \quad (\texttt{not} zuerst)\\
-  $= T \text{ or } \underline{T \text{ and } F} \text{ or } F$\\
-  $= T \text{ or } F \text{ or } F = \mathbf{T}$
+\begin{beispiel}{Mit Klammern}
+  \texttt{not(False or not(True and False)) and True}\\
+  $= \text{not}(F \text{ or not}(\underline{T \text{ and } F})) \text{ and } T$ \hfill innerste Klammer\\
+  $= \text{not}(F \text{ or } \underline{\text{not } F}) \text{ and } T$\\
+  $= \text{not}(\underline{F \text{ or } T}) \text{ and } T$\\
+  $= \underline{\text{not } T} \text{ and } T = F \text{ and } T = \mathbf{F}$
 \end{beispiel}
 
-\begin{beispiel}{Serie 1, Aufgabe 1d (mit Klammern)}
-  \texttt{not(not True or not(False and not True)) or False}\\
-  $= \text{not}(F \text{ or not}(\underline{F \text{ and } F})) \text{ or } F$\\
-  $= \text{not}(F \text{ or } \underline{\text{not } F}) \text{ or } F
-   = \text{not}(\underline{F \text{ or } T}) \text{ or } F$\\
-  $= \underline{\text{not } T} \text{ or } F = F \text{ or } F = \mathbf{F}$
-\end{beispiel}
+\begin{fehler}
+  \texttt{not} gilt nur für den \textbf{direkt folgenden} Wert, nicht für den Rest:
+  \texttt{not True or True} ist $(\text{not } T) \text{ or } T = T$ und nicht
+  $\text{not}(T \text{ or } T) = F$.
+\end{fehler}
 
 \begin{pruefung}
-  Schritt für Schritt rechnen und in jeder Zeile nur \textbf{eine} Operation
-  auswerten (unterstreichen). Die meisten Fehler entstehen, wenn man
-  \texttt{or} vor \texttt{and} auswertet.
+  Pro Zeile nur \textbf{eine} Operation auswerten und unterstreichen. Am Schluss
+  in Python nachprüfen: Den Ausdruck einfach eintippen.
 \end{pruefung}
+
+\begin{minicheck}
+  \begin{enumerate}[label=\textbf{F\arabic*}, ref=F\arabic*, series=fragen01]
+    \item Wie viele Werte lassen sich mit 4 Bit darstellen?
+    \item Werte aus: \texttt{True and not False or False and True}
+    \item Werte aus: \texttt{not(not False or False) or not(True and True)}
+    \item Setze Klammern so, wie Python \texttt{not a or b and c} liest.
+  \end{enumerate}
+\end{minicheck}
 
 % =====================================================================
 \section{Integer}
 
-\begin{definition}{Integer}
-  Ein integer-Wert ist eine ganze Zahl:
-  $\Z = \{\ldots, -2, -1, 0, 1, 2, \ldots\}$.
-  Die Operatoren $-$ (Negation), $+$, $-$, $*$ sind immer wohldefiniert.
-  Für die Division gibt es zwei eigene Operatoren:
-  \begin{itemize}[nosep]
-    \item \texttt{//} Ganzzahldivision: $10\,/\!/\,3 = 3$, \; $10\,/\!/\,7 = 1$, \; $10\,/\!/\,5 = 2$
-    \item \texttt{\%} Rest: $10 \,\%\, 3 = 1$, \; $10 \,\%\, 7 = 3$, \; $10 \,\%\, 5 = 0$
-  \end{itemize}
-  Es gilt immer: $a = (a \,/\!/\, b)\cdot b + (a \,\%\, b)$.
-\end{definition}
+\subsection*{Ganzzahldivision und Rest}
+Ein \textbf{integer} ist eine ganze Zahl aus $\Z = \{\ldots, -2, -1, 0, 1, 2, \ldots\}$.
+$+$, $-$, $\cdot$ liefern immer wieder ganze Zahlen. Bei der Division nicht, darum gibt
+es zwei Operatoren.
 
-\begin{merke}
-  In Python rundet \texttt{//} immer \textbf{nach unten} (Richtung $-\infty$):
-  $-7\,/\!/\,2 = -4$ und $-7 \,\%\, 2 = 1$.
-\end{merke}
-
-\subsection*{Dezimal $\to$ binär (integer)}
-\begin{enumerate}
-  \item Zahl durch 2 teilen, Rest (0 oder 1) notieren.
-  \item Mit dem Ergebnis von \texttt{//} weitermachen, bis 0 herauskommt.
-  \item Reste \textbf{von unten nach oben} lesen.
-\end{enumerate}
-
-\begin{beispiel}{Serie 1, Aufgabe 2: $(409)_2$}
-  \begin{tabular}{r@{\;}l}
-    409 & Rest 1 \\ 204 & Rest 0 \\ 102 & Rest 0 \\ 51 & Rest 1 \\
-    25 & Rest 1 \\ 12 & Rest 0 \\ 6 & Rest 0 \\ 3 & Rest 1 \\ 1 & Rest 1 \\ 0 &
-  \end{tabular}
-  \qquad $\Rightarrow\; (409)_2 = \mathbf{110011001}$ \;(von unten gelesen)\\[4pt]
-  Kontrolle: $256 + 128 + 16 + 8 + 1 = 409$.
+\begin{beispiel}{Eier in Schachteln}
+  17 Eier, 6 pro Schachtel:\quad
+  $17 \,/\!/\, 6 = 2$ volle Schachteln, \quad $17 \,\%\, 6 = 5$ Eier bleiben übrig.\\
+  Kontrolle: $a = (a \,/\!/\, b)\cdot b + (a \,\%\, b)$, also $2 \cdot 6 + 5 = 17$.
 \end{beispiel}
 
-\begin{pruefung}
-  Immer zurückrechnen (Stellenwerte $1, 2, 4, 8, 16, \ldots$ addieren).
-  Das kostet 20 Sekunden und findet fast jeden Fehler.
-\end{pruefung}
+\begin{fehler}
+  Bei negativen Zahlen rundet Python \texttt{//} \textbf{nach unten} (Richtung $-\infty$),
+  nicht Richtung 0: $-17 \,/\!/\, 5 = -4$ (nicht $-3$) und $-17 \,\%\, 5 = 3$.
+  Kontrolle: $-4 \cdot 5 + 3 = -17$.
+\end{fehler}
+
+\subsection*{Dezimal $\to$ binär: zwei Wege}
+\begin{minipage}[t]{0.48\linewidth}
+  \textbf{Weg A: durch 2 teilen}\\[2pt]
+  Rest notieren, mit dem Ergebnis weiter, bis 0. Reste \textbf{von unten} lesen.\\[4pt]
+  \begin{tabular}{r@{\;:\;2 = \;}r@{\;\;Rest\;}l}
+    157 & 78 & \textbf{1} \\ 78 & 39 & \textbf{0} \\ 39 & 19 & \textbf{1} \\
+    19 & 9 & \textbf{1} \\ 9 & 4 & \textbf{1} \\ 4 & 2 & \textbf{0} \\
+    2 & 1 & \textbf{0} \\ 1 & 0 & \textbf{1} \;$\uparrow$
+  \end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \textbf{Weg B: Zweierpotenzen abziehen}\\[2pt]
+  Grösste passende Potenz abziehen, an dieser Stelle eine 1 setzen.\\[4pt]
+  $157 - 128 = 29$\\ $29 - 16 = 13$\\ $13 - 8 = 5$\\ $5 - 4 = 1$\\ $1 - 1 = 0$\\[4pt]
+  \begin{tabular}{*{8}{c}}
+    128 & 64 & 32 & 16 & 8 & 4 & 2 & 1 \\ \midrule
+    1 & 0 & 0 & 1 & 1 & 1 & 0 & 1
+  \end{tabular}
+\end{minipage}
+
+\[
+  (157)_2 = \mathbf{10011101}
+\]
+
+\begin{merke}
+  \begin{itemize}[nosep]
+    \item Weg A ist ein sturer Ablauf und eignet sich für grosse Zahlen. Weg B ist bei
+          kleinen Zahlen schneller und dient gleichzeitig als Kontrolle.
+    \item Das \textbf{letzte Bit} ist $x \,\%\, 2$: gerade Zahlen enden auf 0, ungerade auf 1.
+    \item Ein Bit nach links schieben (eine 0 anhängen) heisst mal 2:
+          $101_2 = 5$, \; $1010_2 = 10$.
+  \end{itemize}
+\end{merke}
+
+\begin{fehler}
+  Die Reste von oben nach unten lesen. Dann kommt die Zahl gespiegelt heraus
+  ($10111001_2 = 185 \ne 157$). Darum immer mit den Stellenwerten zurückrechnen.
+\end{fehler}
+
+\begin{minicheck}
+  \begin{enumerate}[resume*=fragen01]
+    \item Berechne $29 \,/\!/\, 4$, \; $29 \,\%\, 4$, \; $-29 \,/\!/\, 4$, \; $-29 \,\%\, 4$.
+    \item Bestimme $(200)_2$ mit beiden Wegen.
+    \item Woran sieht man ohne Rechnen, dass $11001000_2$ gerade ist?
+  \end{enumerate}
+\end{minicheck}
 
 % =====================================================================
 \section{Float}
 
+\subsection*{Welche Zahlen lassen sich exakt speichern?}
+\begin{itemize}
+  \item \textbf{Rationale Zahlen} $\mathbb{Q}$ haben endlich viele oder periodische
+        Nachkommastellen und sind als Bruch darstellbar.
+  \item \textbf{Irrationale Zahlen} wie $\pi$ oder $\sqrt2$ haben weder ein Ende noch
+        eine Periode.
+  \item Ein \textbf{float} hat nur \textbf{endlich viele} Stellen. Alles, was unendlich
+        weitergeht, wird abgeschnitten bzw.\ gerundet.
+\end{itemize}
+
+\begin{merke}
+  \textbf{Wann endet ein Bruch im Binärsystem?} Bruch vollständig kürzen und den
+  Nenner anschauen:
+  \begin{itemize}[nosep]
+    \item Nenner enthält \textbf{nur den Faktor 2} (2, 4, 8, \ldots) $\Rightarrow$ endlich:
+          $\tfrac38 = 0.011_2$
+    \item sonst periodisch: $\tfrac{1}{10} = \tfrac{1}{2 \cdot 5}$ $\Rightarrow$ $0.1$ ist
+          binär periodisch.
+  \end{itemize}
+  Im Dezimalsystem ist es gleich, nur mit den Faktoren 2 und 5. Darum hat $\tfrac13$
+  dort keine endliche Darstellung.
+\end{merke}
+
 \subsection*{Periodische Dezimalzahl $\to$ Bruch}
-Zahlen mit periodischen (oder endlichen) Nachkommastellen sind \textbf{rational}
-($\in \mathbb{Q}$), also als Bruch darstellbar.
-\begin{enumerate}
-  \item Mit einer Zehnerpotenz multiplizieren, sodass die erste Periode
-        \textbf{vor} dem Komma steht.
-  \item Mit einer zweiten Zehnerpotenz multiplizieren, sodass die Periode
-        \textbf{direkt nach} dem Komma beginnt.
-  \item Subtrahieren: Die Periode fällt weg. Nach $x$ auflösen.
-\end{enumerate}
-
-\begin{beispiel}{Serie 1, Aufgabe 3: $2.10\overline{365}$}
-  \[
-    \begin{array}{r@{\;=\;}l}
-      100000 \cdot x & 210365.\overline{365}\\
-      -\quad 100 \cdot x & 210.\overline{365}\\ \hline
-      99900 \cdot x & 210155
-    \end{array}
-    \quad\Rightarrow\quad x = \frac{210155}{99900} = \frac{42031}{19980}
-  \]
-\end{beispiel}
-
-\subsection*{Nachkommastellen $\to$ binär}
-\begin{enumerate}
-  \item Nachkommateil mal 2 rechnen.
-  \item Der Teil \textbf{vor} dem Komma (0 oder 1) ist das nächste Bit.
-  \item Mit dem Teil nach dem Komma weitermachen.
-  \item Stopp, wenn der Rest 0 ist, oder wenn ein Rest \textbf{wiederkommt}
-        (dann ist die Darstellung periodisch).
-  \item Bits \textbf{von oben nach unten} lesen.
-\end{enumerate}
-
-\begin{beispiel}{$0.625$ und $0.3$}
-  \begin{minipage}[t]{0.45\linewidth}
-    $0.625 \cdot 2 = \mathbf{1} + 0.25$\\
-    $0.25 \cdot 2 = \mathbf{0} + 0.5$\\
-    $0.5 \cdot 2 = \mathbf{1} + 0$\\[2pt]
-    $\Rightarrow (0.625)_2 = 0.\mathbf{101}$
-  \end{minipage}\hfill
+\begin{beispiel}{$x = 0.4\overline{12}$}
   \begin{minipage}[t]{0.5\linewidth}
-    $0.3 \cdot 2 = \mathbf{0} + 0.6$\\
-    $0.6 \cdot 2 = \mathbf{1} + 0.2$ \;$\leftarrow$\\
-    $0.2 \cdot 2 = \mathbf{0} + 0.4$\\
-    $0.4 \cdot 2 = \mathbf{0} + 0.8$\\
-    $0.8 \cdot 2 = \mathbf{1} + 0.6$ \;$\leftarrow$ \;0.6 kommt wieder\\[2pt]
-    $\Rightarrow (0.3)_2 = 0.0\overline{1001}$
+    \textbf{Weg über zwei Gleichungen:}\\[2pt]
+    $\begin{array}{r@{\;=\;}l}
+      1000x & 412.\overline{12}\\
+      10x & 4.\overline{12}\\ \hline
+      990x & 408
+    \end{array}$\\[2pt]
+    {\small Oben steht eine Periode vor dem Komma, unten beginnt sie direkt
+    nach dem Komma.}\\[4pt]
+    $x = \frac{408}{990} = \frac{68}{165}$
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.45\linewidth}
+    \textbf{Schnellformel zur Kontrolle:}\\[2pt]
+    Zähler $=$ (Ziffern bis Ende der 1.\ Periode) $-$ (Ziffern vor der Periode)
+    $= 412 - 4 = 408$\\[2pt]
+    Nenner $=$ eine \textbf{9} pro Periodenziffer, dann eine \textbf{0} pro Ziffer vor
+    der Periode $= 990$
   \end{minipage}
 \end{beispiel}
 
-\begin{beispiel}{Serie 1, Aufgabe 4: $(1/6)_2$}
-  $\tfrac16 \cdot 2 = \mathbf{0} + \tfrac13$, \quad
-  $\tfrac13 \cdot 2 = \mathbf{0} + \tfrac23$, \quad
-  $\tfrac23 \cdot 2 = \mathbf{1} + \tfrac13$ \;($\tfrac13$ kommt wieder)
-  \quad$\Rightarrow\; (1/6)_2 = 0.0\overline{01}$
+\subsection*{Nachkommastellen $\to$ binär: mal 2}
+Immer mal 2 rechnen. Die Stelle vor dem Komma (0 oder 1) ist das nächste Bit, mit
+dem Rest geht es weiter. Bits \textbf{von oben} lesen. Taucht ein Rest zum zweiten
+Mal auf, beginnt die Periode.
+
+\begin{beispiel}{$0.8125$ (endet) und $0.7$ (periodisch)}
+  \begin{minipage}[t]{0.42\linewidth}
+    $0.8125 \cdot 2 = \mathbf{1}.625$\\
+    $0.625 \cdot 2 = \mathbf{1}.25$\\
+    $0.25 \cdot 2 = \mathbf{0}.5$\\
+    $0.5 \cdot 2 = \mathbf{1}.0$ \;\; Rest 0, fertig\\[2pt]
+    $\Rightarrow 0.\mathbf{1101}_2$ \;($\frac12 + \frac14 + \frac1{16}$)
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.52\linewidth}
+    $0.7 \cdot 2 = \mathbf{1}.4$ \;$\leftarrow$ Rest $0.4$\\
+    $0.4 \cdot 2 = \mathbf{0}.8$\\
+    $0.8 \cdot 2 = \mathbf{1}.6$\\
+    $0.6 \cdot 2 = \mathbf{1}.2$\\
+    $0.2 \cdot 2 = \mathbf{0}.4$ \;$\leftarrow$ Rest $0.4$ wieder da\\[2pt]
+    $\Rightarrow 0.7 = 0.1\overline{0110}_2$
+  \end{minipage}\\[4pt]
+  Bei einer Zahl wie $5.7$: Vorkomma- und Nachkommateil \textbf{getrennt} umrechnen,
+  $5.7 = 101.1\overline{0110}_2$.
 \end{beispiel}
 
-\begin{merke}
-  Irrationale Zahlen (z.\,B.\ $\pi$) und Zahlen mit unendlicher Periode
-  (z.\,B.\ $0.3$ im Binärsystem) kann der Computer \textbf{nicht exakt}
-  speichern. Ein \textbf{float} ist eine Kommazahl mit \textbf{endlich vielen}
-  Nachkommastellen, es wird also gerundet. Darum ist in Python
-  \texttt{0.7 + 0.1 == 0.9 - 0.1} \texttt{False}
-  ($0.7999\ldots \ne 0.8$).
-\end{merke}
-
 \subsection*{Fliesskommazahl nach IEEE 754}
+Die Idee ist dieselbe wie bei der wissenschaftlichen Schreibweise $6.02 \cdot 10^{23}$,
+nur zur Basis 2. Jede Zahl ausser 0 lässt sich als $1.\ldots \cdot 2^k$ schreiben:
 \[
   x = (-1)^{s} \cdot 1.m \cdot 2^{\,e - \text{Bias}}
 \]
+
+\begin{center}
+\begin{tikzpicture}[x=0.42cm, y=0.6cm, font=\small]
+  \draw[fill=pruefFarbe!15] (0,0) rectangle (1,1);
+  \draw[fill=hsluBlau!15] (1,0) rectangle (9,1);
+  \draw[fill=bspFarbe!15] (9,0) rectangle (32,1);
+  \node at (0.5,0.5) {$s$};
+  \node at (5,0.5) {Exponent $e$};
+  \node at (20.5,0.5) {Mantisse $m$ (Nachkommabits)};
+  \node[below] at (0.5,0) {1};
+  \node[below] at (5,0) {8 bit};
+  \node[below] at (20.5,0) {23 bit};
+  \node[left] at (0,0.5) {32-bit};
+\end{tikzpicture}
+\end{center}
+
 \begin{center}
   \renewcommand{\arraystretch}{1.2}
   \begin{tabular}{lcccc}
     \toprule
-    Format & Vorzeichen $s$ & Exponent $e$ & Mantisse $m$ & Bias \\
+    Format & $s$ & $e$ & $m$ & Bias \\
     \midrule
-    32-bit (\texttt{float} in Java)  & 1 bit & 8 bit  & 23 bit & 127 \\
-    64-bit (\texttt{double} in Java) & 1 bit & 11 bit & 52 bit & 1023 \\
+    32-bit (\texttt{float} in Java)  & 1 & 8  & 23 & $127 = 2^7 - 1$ \\
+    64-bit (\texttt{double} in Java, \texttt{float} in Python) & 1 & 11 & 52 & $1023 = 2^{10} - 1$ \\
     \bottomrule
   \end{tabular}
-\end{center}
-
-\begin{enumerate}
-  \item Zahl binär schreiben (Vorkomma- und Nachkommateil getrennt).
-  \item Normalisieren: Komma verschieben bis $1.\ldots \cdot 2^{k}$.
-  \item Vorzeichen: $s = 0$ für positiv, $s = 1$ für negativ.
-  \item Exponent: $e = k + 127$ (bzw.\ $k + 1023$), binär mit 8 (bzw.\ 11) Bit,
-        vorne mit Nullen auffüllen.
-  \item Mantisse: die Bits \textbf{nach} der führenden 1 (die 1 wird nicht
-        gespeichert). Auf 23 (bzw.\ 52) Bit kürzen und \textbf{runden}: Ist das
-        erste abgeschnittene Bit eine 1 (und danach nicht nur Nullen), wird
-        das letzte Bit um 1 erhöht.
-\end{enumerate}
-
-\begin{beispiel}{Serie 1, Aufgabe 5a: $0.00\overline{10}$ \;(= $1/6$)}
-  $0.00101010\ldots = 1.\overline{01} \cdot 2^{-3}$\\[2pt]
-  32-bit: $e = -3 + 127 = 124 = (01111100)_2$, Mantisse $0101\ldots01|\,1\ldots$
-  wird aufgerundet:\\
-  \hspace*{1em}\texttt{0 01111100 01010101010101010101011}\\[2pt]
-  64-bit: $e = -3 + 1023 = 1020 = (01111111100)_2$, abgeschnittenes Bit ist 0,
-  also abrunden:\\
-  \hspace*{1em}\texttt{0 01111111100 0101\ldots0101} \;(52 Bit)
-\end{beispiel}
-
-\begin{beispiel}{Serie 1, Aufgabe 5b: $35.2$}
-  $35 = (100011)_2$, \; $0.2 = (0.\overline{0011})_2$
-  \;$\Rightarrow\; 35.2 = 100011.\overline{0011}_2 = 1.00011\overline{0011} \cdot 2^{5}$\\[2pt]
-  32-bit: $e = 5 + 127 = 132 = (10000100)_2$, aufrunden:\\
-  \hspace*{1em}\texttt{0 10000100 00011001100110011001101}\\[2pt]
-  64-bit: $e = 5 + 1023 = 1028 = (10000000100)_2$, aufrunden:\\
-  \hspace*{1em}\texttt{0 10000000100 00011001100\ldots110011010} \;(52 Bit)
-\end{beispiel}
-
-\begin{pruefung}
-  \begin{itemize}[nosep]
-    \item Bias auswendig: \textbf{127} (32-bit) und \textbf{1023} (64-bit).
-    \item Die führende 1 kommt \textbf{nicht} in die Mantisse (\enquote{hidden bit}).
-    \item Exponent immer auf volle Länge (8 bzw.\ 11 Bit) auffüllen.
-    \item Bei periodischen Zahlen das \textbf{Runden} am Schluss nicht vergessen.
-  \end{itemize}
-\end{pruefung}
-
-% =====================================================================
-\section{Set, List und Matrix}
-
-\begin{definition}{Menge (set)}
-  Eine \textbf{ungeordnete} Sammlung von Objekten, \textbf{ohne} Rücksicht auf
-  Wiederholung. $x \in M$: $x$ ist Element von $M$; $x \notin M$: ist es nicht.\\
-  Aufzählen: $A = \{0, 1, \ldots, 9\}$ \quad Beschreiben:
-  $B = \{x : x \text{ ist eine Ziffer}\}$
-\end{definition}
-
-\begin{center}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{@{}l l X@{}}
-    \toprule
-    Symbol & Name & Beispiel \\
-    \midrule
-    $=$ & Gleichheit & $\{a,b,c\} = \{b,c,a\}$, \; $\{a,b,c\} \ne \{a,b,x\}$ \\
-    $\subset$ & Teilmenge & $\{a,b,c\} \subset \{a,b,c,x\}$, \; $\{\} \subset \{a,b,c\}$, \; $\{a,b\} \not\subset \{a,c,x\}$ \\
-    $\cap$ & Durchschnitt & $\{a,b,c\} \cap \{b,c,d\} = \{b,c\}$, \; $\{a,b\} \cap \{c,d\} = \{\}$ \\
-    $\cup$ & Vereinigung & $\{a,b,c\} \cup \{b,c,d\} = \{a,b,c,d\}$ \\
-    $\setminus$ & Differenz & $\{a,b,c\} \setminus \{b,c,d\} = \{a\}$, \; $\{a,b\} \setminus \{c,d\} = \{a,b\}$ \\
-    $\overline{\phantom{A}}$ & Komplement & in $G = \{a,b,c,d,e\}$: \; $\overline{\{a,b\}} = \{c,d,e\}$ \\
-    \bottomrule
-  \end{tabularx}
 \end{center}
 
 \begin{merke}
   \begin{itemize}[nosep]
-    \item In dieser Vorlesung bedeutet $\subset$ \enquote{ist Teilmenge oder gleich}:
-          $\{a,b,c\} \subset \{a,b,c\}$ ist wahr.
-    \item Die leere Menge $\{\}$ ist Teilmenge \textbf{jeder} Menge.
-    \item Das Komplement gibt es nur bezüglich einer Grundmenge $G$.
-    \item Eine Menge mit $n$ Elementen hat $\mathbf{2^n}$ Teilmengen.
+    \item \textbf{Warum ein Bias?} Der Exponent kann negativ sein, das Feld $e$ hat aber
+          kein eigenes Vorzeichen. Darum speichert man $k + 127$: Aus $k = -3$ wird $124$,
+          aus $k = 5$ wird $132$.
+    \item \textbf{Hidden Bit:} Nach dem Normalisieren steht vor dem Komma \emph{immer}
+          eine 1. Die speichert man nicht und gewinnt so ein Bit Genauigkeit.
   \end{itemize}
 \end{merke}
 
-\begin{beispiel}{Serie 1, Aufgabe 6: Teilmengen von $\{a,b,c,d\}$ \;($2^4 = 16$)}
-  \begin{tabular}{@{}lllll@{}}
-    0 Elemente & 1 Element & 2 Elemente & 3 Elemente & 4 Elemente \\ \midrule
-    $\{\}$ & $\{a\}, \{b\}$ & $\{a,b\}, \{a,c\}, \{a,d\}$ & $\{a,b,c\}, \{a,b,d\}$ & $\{a,b,c,d\}$ \\
-           & $\{c\}, \{d\}$ & $\{b,c\}, \{b,d\}, \{c,d\}$ & $\{a,c,d\}, \{b,c,d\}$ & \\
-    \midrule
-    1 & 4 & 6 & 4 & 1
-  \end{tabular}
+\textbf{Rezept Dezimal $\to$ IEEE:}
+\begin{enumerate}[nosep]
+  \item Vorzeichen bestimmen: $s = 0$ für $+$, $s = 1$ für $-$.
+  \item Betrag binär schreiben und auf $1.\ldots \cdot 2^k$ normalisieren.
+  \item $e = k + \text{Bias}$ binär, mit Nullen auf 8 bzw.\ 11 Bit auffüllen.
+  \item $m$ = Bits \textbf{nach} der führenden 1. Hinten mit Nullen auffüllen bzw.\
+        auf 23/52 Bit kürzen und \textbf{runden}: Ist das erste weggelassene Bit eine 1
+        (und folgt danach nicht nur noch 0), wird aufgerundet.
+\end{enumerate}
+
+\begin{beispiel}{$12.375$ (geht auf)}
+  $12 = 1100_2$, \; $0.375 = 0.011_2$ \;$\Rightarrow\; 1100.011_2 = 1.100011 \cdot 2^{3}$\\
+  $s = 0$, \; $e = 3 + 127 = 130 = 10000010_2$, \; $m = 100011$ und dann Nullen\\[2pt]
+  \hspace*{1em}\texttt{0 10000010 10001100000000000000000}
 \end{beispiel}
 
-\begin{definition}{Liste (list)}
-  Eine \textbf{geordnete} Sammlung von Objekten, \textbf{mit} Rücksicht auf
-  Wiederholung, z.\,B.\ $a = (5, 3, 8, 8, 1)$. Die Objekte heissen Komponenten
-  oder Einträge. $a_i$ bzw.\ \texttt{a[i]} ist die Komponente am $i$-ten Platz:
-  $a_2 = \texttt{a[2]} = 3$ (Index ab 1).
-\end{definition}
+\begin{beispiel}{$-0.1$ (periodisch, mit Rundung)}
+  $0.1 = 0.0\overline{0011}_2 = 0.000110011\ldots = 1.\overline{1001} \cdot 2^{-4}$\\
+  $s = 1$, \; $e = -4 + 127 = 123 = 01111011_2$\\
+  $m = \underbrace{10011001100110011001100}_{23 \text{ Bit}}\,|\,\mathbf{1}1001\ldots$
+  \;$\to$ erstes weggelassenes Bit ist 1, also aufrunden:\\[2pt]
+  \hspace*{1em}\texttt{1 01111011 10011001100110011001101}\\[2pt]
+  Die gespeicherte Zahl ist also ein bisschen \emph{grösser} als $0.1$. Daher kommt
+  in Python $0.1 + 0.2 = 0.30000000000000004$.
+\end{beispiel}
 
-\begin{definition}{Matrix (matrix)}
-  Eine zweidimensionale, rechteckig geordnete Sammlung mit Rücksicht auf
-  Wiederholung. Eine $m \times n$ Matrix hat $m$ \textbf{Zeilen} und $n$
-  \textbf{Spalten} (Dimension). $a_{ij} = \texttt{A[i,j]} = \texttt{A[i][j]}$
-  ist der Eintrag in Zeile $i$, Spalte $j$.
-  \[
-    A = \begin{pmatrix} 5 & 3 & 8 & 8 & 1 \\ 1 & 0 & 0 & 9 & 7 \end{pmatrix}
-    \quad (2 \times 5), \qquad a_{24} = 9
-  \]
-\end{definition}
+\begin{beispiel}{Rückwärts: IEEE $\to$ Dezimal}
+  \texttt{1 10000000 01100000000000000000000}\\
+  $s = 1 \Rightarrow$ negativ, \; $e = 128 \Rightarrow k = 128 - 127 = 1$, \;
+  Mantisse mit hidden bit: $1.011_2$\\
+  $-1.011_2 \cdot 2^1 = -10.11_2 = -(2 + 0.5 + 0.25) = \mathbf{-2.75}$
+\end{beispiel}
 
-\subsection*{Komponentenweise rechnen und Broadcasting}
+\begin{fehler}
+  \begin{itemize}[nosep]
+    \item Die führende 1 in die Mantisse schreiben, obwohl sie nicht gespeichert wird.
+    \item Den Exponenten nicht auf 8 bzw.\ 11 Bit auffüllen ($124 = 1111100_2$ hat nur 7 Bit,
+          gespeichert wird \texttt{01111100}).
+    \item Bias 128 statt 127 verwenden.
+    \item Floats mit \texttt{==} vergleichen. Besser ist \texttt{math.isclose(a, b)}.
+  \end{itemize}
+\end{fehler}
+
+\begin{minicheck}
+  \begin{enumerate}[resume*=fragen01]
+    \item Schreibe $0.\overline{45}$ und $0.1\overline{6}$ als Bruch.
+    \item Endlich oder periodisch im Binärsystem: $\tfrac38$, \; $\tfrac15$, \; $0.45$, \; $0.75$?
+    \item Bestimme $(0.45)_2$.
+    \item Welche Zahl ist \texttt{0 10000001 01000000000000000000000}?
+    \item Gib $-2.75$ als 32-bit Fliesskommazahl an. Kontrolliere mit dem Beispiel oben.
+  \end{enumerate}
+\end{minicheck}
+
+% =====================================================================
+\section{Set, List und Matrix}
+\label{sec:01-mengen}
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{lcccc}
+    \toprule
+    & Ordnung zählt? & Duplikate zählen? & Schreibweise & Beispiel \\
+    \midrule
+    Menge (set) & nein & nein & $\{\ \}$ & $\{3,1,3\} = \{1,3\}$ \\
+    Liste (list) & ja & ja & $(\ )$ & $(3,1,3) \ne (1,3) \ne (3,1)$ \\
+    Matrix & ja (Zeile, Spalte) & ja & $m \times n$ & $\begin{pmatrix}1&2\\3&4\end{pmatrix}$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+\subsection*{Mengen}
+Eine Menge ist wie ein \textbf{Sack}: Es zählt nur, \emph{was} drin ist, nicht in welcher
+Reihenfolge und nicht wie oft. $x \in M$ heisst \enquote{$x$ ist drin}, $x \notin M$
+\enquote{ist nicht drin}. Man kann eine Menge aufzählen, $\{2,4,6\}$, oder beschreiben,
+$\{x : x \text{ ist gerade und } 0 < x < 7\}$.
+
+Beispiel mit $G = \{1, \ldots, 8\}$, \; $A = \{1,2,3,4\}$, \; $B = \{3,4,5,6\}$:
+
+\begin{center}
+\newcommand{\venn}[1]{%
+  \begin{tikzpicture}[scale=0.45]
+    \def\A{(0,0) circle (1.2)}\def\B{(1.4,0) circle (1.2)}
+    #1
+    \draw \A node[left=6pt] {\scriptsize $A$};
+    \draw \B node[right=6pt] {\scriptsize $B$};
+  \end{tikzpicture}}
+\renewcommand{\arraystretch}{1.3}
+\small
+\begin{tabular}{@{}*{4}{>{\centering\arraybackslash}p{0.225\linewidth}}@{}}
+  \venn{\begin{scope}\clip\A;\fill[hsluBlau!30]\B;\end{scope}} &
+  \venn{\fill[hsluBlau!30]\A;\fill[hsluBlau!30]\B;} &
+  \venn{\begin{scope}\clip\A;\fill[hsluBlau!30]\A;\fill[white]\B;\end{scope}} &
+  \venn{\fill[hsluBlau!30](-1.6,-1.5) rectangle (3,1.5);\fill[white]\A;
+        \draw (-1.6,-1.5) rectangle (3,1.5);} \\
+  $A \cap B = \{3,4\}$ & $A \cup B = \{1,\ldots,6\}$ & $A \setminus B = \{1,2\}$ &
+  $\overline{A} = \{5,6,7,8\}$ \\
+  Durchschnitt: in beiden & Vereinigung: in mind.\ einer & Differenz: in $A$, nicht in $B$ &
+  Komplement: in $G$, nicht in $A$
+\end{tabular}
+\end{center}
+
+\begin{merke}
+  \begin{itemize}[nosep]
+    \item $A \subset B$ (Teilmenge): Jedes Element von $A$ liegt auch in $B$.
+          In dieser Vorlesung ist $A \subset A$ erlaubt (also wie $\subseteq$).
+    \item Die leere Menge $\{\}$ ist Teilmenge \textbf{jeder} Menge.
+    \item Ein Komplement ergibt nur Sinn, wenn die Grundmenge $G$ bekannt ist.
+  \end{itemize}
+\end{merke}
+
+\subsection*{Warum $2^n$ Teilmengen? Die Bit-Brücke}
+Für jedes Element gibt es genau zwei Möglichkeiten: \textbf{drin (1)} oder
+\textbf{nicht drin (0)}. Jede Teilmenge entspricht also einer Bitfolge der Länge $n$,
+und davon gibt es $2^n$ (siehe Bits). Für $\{x, y, z\}$:
+
+\begin{center}
+  \small
+  \begin{tabular}{*{8}{c}}
+    \toprule
+    000 & 001 & 010 & 011 & 100 & 101 & 110 & 111 \\
+    $\{\}$ & $\{z\}$ & $\{y\}$ & $\{y,z\}$ & $\{x\}$ & $\{x,z\}$ & $\{x,y\}$ & $\{x,y,z\}$ \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+So vergisst man keine Teilmenge: binär von 0 bis $2^n - 1$ hochzählen. Wie viele
+Teilmengen genau $k$ Elemente haben, zeigt die Pascal-Zeile
+(für $n = 4$: $1, 4, 6, 4, 1$, Summe 16).
+
+\subsection*{Listen und Matrizen}
 \begin{itemize}
-  \item \textbf{Komponentenweise:} Gleich grosse Listen/Matrizen werden Eintrag
-        für Eintrag verrechnet.\\
-        $(1,3,-1,0,1.5) + (1,2,2,1,0.5) = (2,5,1,1,2)$\\
-        $(T,T,F) \text{ and } (F,T,F) = (F,T,F)$
-  \item \textbf{Broadcasting:} Ein einzelner Wert wird zu einer Liste gleicher
-        Grösse erweitert:\\
-        $3 \cdot (2,5,4,-2) = (3,3,3,3) \cdot (2,5,4,-2) = (6,15,12,-6)$\\
-        $3 - (0,1,2,3,2,1,0) = (3,2,1,0,1,2,3)$
-  \item \textbf{Einstellige Operatoren} wirken auf alle Komponenten:
-        $\text{not}(T,F,F,T,F) = (F,T,T,F,T)$
-  \item Eine $m \times n$ Matrix lässt sich mit einer $1 \times 1$,
-        $m \times 1$ (Spalte wird kopiert) oder $1 \times n$ (Zeile wird
-        kopiert) Matrix verrechnen.
+  \item $a_i$ ist die $i$-te Komponente. In der Mathematik beginnt man bei 1, in
+        \textbf{Python bei 0}: Für \texttt{a = [4, 7, 9]} ist $a_1 = 4 = $ \texttt{a[0]}.
+  \item Eine $m \times n$ Matrix hat $m$ \textbf{Zeilen} und $n$ \textbf{Spalten}
+        (Eselsbrücke \enquote{\textbf{Z}eilen \textbf{z}uerst}). $a_{ij}$ steht in Zeile
+        $i$, Spalte $j$, in Python \texttt{A[i][j]} oder (NumPy) \texttt{A[i, j]}.
 \end{itemize}
 
-\begin{beispiel}{Broadcasting mit Matrizen (Serie 1, S.\,11)}
+\subsection*{Komponentenweise rechnen und Broadcasting}
+\textbf{Komponentenweise:} Bei gleicher Grösse wird jeder Eintrag mit dem Eintrag an
+derselben Stelle verrechnet.
+\[
+  (4, 0, -2) + (1, 5, 2) = (5, 5, 0), \qquad
+  (T, F, T) \text{ or } (F, F, T) = (T, F, T)
+\]
+\textbf{Broadcasting:} Ist ein Teil zu klein, wird er durch \textbf{Kopieren} passend
+gemacht, danach rechnet man komponentenweise.
+\[
+  10 - (1, 2, 3) = (10, 10, 10) - (1, 2, 3) = (9, 8, 7), \qquad
+  \text{not}(T, F) = (F, T)
+\]
+
+\begin{merke}
+  \textbf{Wann passt Broadcasting?} Man vergleicht die Dimensionen Zeile mit Zeile und
+  Spalte mit Spalte. Jedes Paar muss \textbf{gleich} sein, oder einer der beiden Werte ist
+  \textbf{1} (dann wird kopiert). Mit einer $m \times n$ Matrix funktionieren also:
+  $1 \times 1$ (Zahl), \; $m \times 1$ (Spalte wird nach rechts kopiert), \;
+  $1 \times n$ (Zeile wird nach unten kopiert).
+\end{merke}
+
+\begin{beispiel}{$2 \cdot A - \text{Spalte} + \text{Zeile}$}
   \[
-    \underbrace{2}_{1\times1} +
-    \underbrace{\begin{pmatrix}1&2&1&1\\3&4&2&2\\3&5&1&1\end{pmatrix}}_{3\times4} -
-    \underbrace{\begin{pmatrix}1\\2\\3\end{pmatrix}}_{3\times1} +
-    \underbrace{\begin{pmatrix}0&1&1&2\end{pmatrix}}_{1\times4} \cdot
-    \begin{pmatrix}1&2&3&2\\1&5&3&3\\1&2&2&5\end{pmatrix}
-    = \begin{pmatrix}2&5&5&6\\3&9&5&8\\2&6&2&10\end{pmatrix}
+    2 \cdot \underbrace{\begin{pmatrix}1&0&2\\3&1&1\end{pmatrix}}_{2\times3}
+    - \underbrace{\begin{pmatrix}1\\2\end{pmatrix}}_{2\times1}
+    + \underbrace{\begin{pmatrix}0&1&2\end{pmatrix}}_{1\times3}
+    = \begin{pmatrix}2&0&4\\6&2&2\end{pmatrix}
+    - \begin{pmatrix}1&1&1\\2&2&2\end{pmatrix}
+    + \begin{pmatrix}0&1&2\\0&1&2\end{pmatrix}
+    = \begin{pmatrix}1&0&5\\4&1&2\end{pmatrix}
   \]
-  Hier ist $\cdot$ \textbf{komponentenweise} gemeint (nicht Matrixmultiplikation).
-  Punkt vor Strich gilt weiterhin.
 \end{beispiel}
 
-\begin{pruefung}
-  Vor dem Rechnen die Dimension jedes Teils notieren (wie oben unter den
-  Klammern). So sieht man sofort, in welche Richtung kopiert wird und ob
-  Broadcasting überhaupt möglich ist.
-\end{pruefung}
+\begin{fehler}
+  \begin{itemize}[nosep]
+    \item Komponentenweises $\cdot$ mit der Matrixmultiplikation verwechseln. Hier wird
+          immer Eintrag mal Eintrag gerechnet (in NumPy \texttt{*}, das Matrixprodukt
+          ist \texttt{@}).
+    \item Zeilen und Spalten vertauschen: $(1, 2, 3)$ als Zeile ist $1 \times 3$, als
+          Spalte $3 \times 1$.
+  \end{itemize}
+\end{fehler}
+
+\begin{minicheck}
+  \begin{enumerate}[resume*=fragen01]
+    \item $G = \{a, \ldots, f\}$, $A = \{a,b,c\}$, $B = \{c,d\}$. Bestimme $A \cap B$,
+          $A \cup B$, $A \setminus B$ und $\overline{A \cup B}$.
+    \item Welche Teilmenge von $\{x,y,z\}$ hat das Bitmuster \texttt{101}? Wie viele
+          Teilmengen von $\{x,y,z\}$ haben genau 2 Elemente?
+    \item \texttt{a = [4, 7, 7, 2]}: Was ist $a_3$ (Mathematik) und was \texttt{a[3]} (Python)?
+    \item Welche Kombinationen funktionieren mit Broadcasting:
+          $(2\times3) + (3\times1)$, \; $(2\times3) + (1\times3)$, \; $(2\times3) + (2\times1)$?
+  \end{enumerate}
+\end{minicheck}
 
 % =====================================================================
 \section{Funktion}
 
 \begin{definition}{Funktion}
-  Sei $D$ der Definitionsbereich (Inputs) und $W$ der Wertevorrat (Outputs).
-  Eine Funktion $f\colon D \longrightarrow W$ ordnet \textbf{jedem} Element
-  in $D$ \textbf{genau ein} Element in $W$ zu. Schreibweise:
-  $x \mapsto y$ oder $f(x) = y$.
+  Eine Funktion $f\colon D \to W$ ist wie ein \textbf{Automat}: Man gibt ein Element aus
+  dem Definitionsbereich $D$ hinein und bekommt \textbf{immer genau ein} Element aus dem
+  Wertevorrat $W$ heraus. Schreibweise: $x \mapsto y$ oder $f(x) = y$.
 \end{definition}
 
-\begin{definition}{Algorithmus}
-  Eine präzise, schrittweise Angabe, die für jeden Input $x \in D$ beschreibt,
-  wie der zugehörige Output $y = f(x)$ bestimmt wird.
-\end{definition}
+\begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{@{}l c X@{}}
+    \toprule
+    Zuordnung & Funktion? & Begründung \\
+    \midrule
+    Person $\mapsto$ Geburtsdatum & ja & Jede Person hat genau ein Geburtsdatum. \\
+    Datum $\mapsto$ Person, die dann Geburtstag hat & nein & Mehrere oder keine Person möglich. \\
+    $x \mapsto x^2$ auf $\Z$ & ja & $f(2) = f(-2) = 4$ ist erlaubt: Gleicher Output für verschiedene Inputs ist ok. \\
+    $x \mapsto \pm\sqrt{x}$ & nein & Ein Input hat zwei Outputs. \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
 
-\begin{beispiel}{$\text{decToBin}\colon \N \to \{\text{Zeichenketten aus 0 und 1}\}$}
+\begin{merke}
+  Ein \textbf{Algorithmus} ist das \textbf{Rezept} zur Funktion: eine genaue
+  Schritt-für-Schritt-Anleitung, die zu jedem $x \in D$ den Wert $f(x)$ berechnet.
+  Die Funktion sagt \emph{was} herauskommt, der Algorithmus \emph{wie}.
+\end{merke}
+
+\begin{beispiel}{Weg A aus der Integer-Umrechnung als Python-Funktion}
 \begin{lstlisting}[language=Python]
 def decToBin(x):
     y = ''
-    temp = x
-    while temp != 0:
-        if temp % 2 == 0:
-            y = '0' + y      # Rest 0 vorne anhängen
-        else:
-            y = '1' + y      # Rest 1 vorne anhängen
-        temp = temp // 2
+    while x != 0:
+        y = str(x % 2) + y    # Rest vorne anhängen = "von unten lesen"
+        x = x // 2
     return y
 \end{lstlisting}
-  Das ist genau das Verfahren \enquote{durch 2 teilen, Reste von unten lesen}:
-  Jeder neue Rest wird \textbf{vorne} angehängt.
+  \textbf{Nachverfolgen} (so wird es in der Prüfung gefragt) für \texttt{decToBin(13)}:\\[2pt]
+  \begin{tabular}{lccccc}
+    \toprule
+    \texttt{x}          & 13 & 6 & 3 & 1 & 0 \\
+    \texttt{x \% 2}     & 1 & 0 & 1 & 1 & -- \\
+    \texttt{y} danach   & \texttt{'1'} & \texttt{'01'} & \texttt{'101'} & \texttt{'1101'} & Ende \\
+    \bottomrule
+  \end{tabular}
 \end{beispiel}
 
+\begin{fehler}
+  Randfälle prüfen: \texttt{decToBin(0)} liefert \texttt{''}, weil die Schleife nie
+  läuft. Richtig wäre \texttt{'0'}. Ausserdem ist nicht jede Python-Funktion eine
+  mathematische: \texttt{random.random()} gibt bei gleichem Input verschiedene Outputs.
+\end{fehler}
+
+\begin{minicheck}
+  \begin{enumerate}[resume*=fragen01]
+    \item Funktion oder nicht: (a) Matrikelnummer $\mapsto$ Studierende,
+          (b) Vorname $\mapsto$ Studierende, (c) Studierende $\mapsto$ Vorname?
+    \item Verfolge \texttt{decToBin(10)} in einer Tabelle nach.
+  \end{enumerate}
+\end{minicheck}
+
 % =====================================================================
-\section{Prüfungsrelevant}
+\section{Prüfungsrelevant: das Wichtigste auf einen Blick}
 \begin{pruefung}
   \begin{itemize}[nosep]
-    \item Boolesche Ausdrücke: Klammern, dann \texttt{not} $>$ \texttt{and} $>$ \texttt{or}, sonst von links.
-    \item \texttt{and} nur T bei T/T, \texttt{or} nur F bei F/F.
-    \item Integer $\to$ binär: durch 2 teilen, Reste \textbf{von unten} lesen.
-    \item Nachkomma $\to$ binär: mal 2, Bits \textbf{von oben} lesen, auf Wiederholung achten.
-    \item Periode $\to$ Bruch: zwei Gleichungen, subtrahieren.
-    \item IEEE 754: $1|8|23$ mit Bias 127, $1|11|52$ mit Bias 1023, hidden bit, runden.
-    \item Menge: ungeordnet, ohne Wiederholung. Liste: geordnet, mit Wiederholung.
-    \item $n$ Elemente $\Rightarrow 2^n$ Teilmengen.
-    \item Broadcasting: $1\times1$, $m\times1$, $1\times n$ mit $m\times n$.
-    \item Funktion: jedem Input \textbf{genau ein} Output.
+    \item \textbf{Boolean:} Klammern $\to$ \texttt{not} $\to$ \texttt{and} $\to$ \texttt{or}
+          (Punkt vor Strich). \texttt{and} $= a \cdot b$, \texttt{or} $= \max$, \texttt{not} $= 1 - a$.
+    \item \textbf{Integer:} $a = (a /\!/ b)\cdot b + a \% b$. Python rundet \texttt{//} nach unten.
+    \item \textbf{Dezimal $\to$ binär:} ganze Zahl durch 2, Reste \textbf{von unten};
+          Nachkommateil mal 2, Bits \textbf{von oben}; bei wiederkehrendem Rest beginnt die Periode.
+    \item \textbf{Periode $\to$ Bruch:} zwei Gleichungen subtrahieren; Kontrolle mit der 9er/0er-Formel.
+    \item \textbf{Binär endlich} $\iff$ der gekürzte Nenner hat nur den Faktor 2.
+    \item \textbf{IEEE 754:} $1|8|23$ mit Bias 127, $1|11|52$ mit Bias 1023, hidden bit, runden.
+    \item \textbf{Mengen:} ohne Ordnung und ohne Duplikate; $2^n$ Teilmengen über Bitmuster.
+    \item \textbf{Broadcasting:} Dimensionen paarweise gleich oder 1.
+    \item \textbf{Funktion:} jeder Input genau ein Output.
   \end{itemize}
 \end{pruefung}
 
-% =====================================================================
-\section{Kontrollfragen}
-\label{sec:01-fragen}
-Erst selbst lösen, dann in Abschnitt~\ref{sec:01-loesungen} vergleichen.
-
-\subsection*{Bit und Boolean}
-\begin{enumerate}[label=\textbf{F\arabic*}, ref=F\arabic*, series=fragen01]
-  \item Was ist ein Bit? Nenne vier Sichtweisen auf seine zwei Werte.
-  \item Was ist der Unterschied zwischen einem einstelligen und einem
-        zweistelligen Operator? Nenne je ein Beispiel.
-  \item Werte aus: \texttt{True and not False or False}
-  \item Werte aus: \texttt{False or not False and False}
-  \item Werte aus: \texttt{not(True and (False or not False)) or not True}
-  \item Welchen Wert liefern in Python \texttt{True + True} und \texttt{bool(0)}?
-\end{enumerate}
-
-\subsection*{Integer}
+\section{Prüfungssimulation}
+Gemischte Aufgaben wie in der Prüfung. Ohne Hilfsmittel lösen, Zeit stoppen
+(Ziel: 15 Minuten). Danach die Serie~1 noch einmal \emph{ohne} die eigenen Lösungen
+durchrechnen.
 \begin{enumerate}[resume*=fragen01]
-  \item Berechne $23\,/\!/\,4$, $23 \,\%\, 4$ und in Python $-7\,/\!/\,2$.
-  \item Bestimme $(100)_2$.
-  \item Welche Dezimalzahl ist $(101101)_2$?
-\end{enumerate}
-
-\subsection*{Float}
-\begin{enumerate}[resume*=fragen01]
-  \item Schreibe $1.2\overline{3}$ als Bruch.
-  \item Bestimme $(0.375)_2$ und $(0.1)_2$.
-  \item Warum liefert \texttt{0.7 + 0.1 == 0.9 - 0.1} in Python \texttt{False}?
-  \item Gib $-6.5$ als 32-bit Fliesskommazahl an.
-  \item Warum wird die führende 1 der Mantisse nicht gespeichert?
-\end{enumerate}
-
-\subsection*{Set, List, Matrix}
-\begin{enumerate}[resume*=fragen01]
-  \item Wie viele Teilmengen hat $\{1,2,3,4,5\}$?
-  \item Sei $G = \{1,\ldots,6\}$, $A = \{1,2,3,4\}$, $B = \{3,4,5\}$.
-        Bestimme $A \cap B$, $A \cup B$, $A \setminus B$, $B \setminus A$ und $\overline{A}$.
-  \item Ist $\{1,1,2\} = \{1,2\}$? Ist $(1,1,2) = (1,2)$? Ist $(1,2) = (2,1)$?
-  \item Berechne $2 \cdot (1,-1,3) - 1$.
-  \item Mit welchen Dimensionen kann eine $3 \times 4$ Matrix per Broadcasting
-        verrechnet werden? Geht $4 \times 1$?
-\end{enumerate}
-
-\subsection*{Funktion}
-\begin{enumerate}[resume*=fragen01]
-  \item Ist die Zuordnung $x \mapsto \pm\sqrt{x}$ (für $x > 0$) eine Funktion?
-  \item Was liefert \texttt{decToBin(6)}? Und \texttt{decToBin(0)}?
+  \item Werte Schritt für Schritt aus:
+        \texttt{not False and (True or False) and not (False or not False)}
+  \item Schreibe $3.2\overline{7}$ als Bruch.
+  \item Gib $0.375$ als 64-bit Fliesskommazahl an.
+  \item Berechne komponentenweise mit Broadcasting:
+        $1 - \begin{pmatrix}0&1\\1&0\end{pmatrix} + \begin{pmatrix}3\\-1\end{pmatrix}
+        \cdot \begin{pmatrix}1&2\\0&1\end{pmatrix}$
+  \item Wie viele Teilmengen von $\{1, \ldots, 6\}$ enthalten die Zahl 1?
 \end{enumerate}
 
 % =====================================================================
-\section{Lösungen zu den Kontrollfragen}
+\section{Lösungen}
 \label{sec:01-loesungen}
 \begin{enumerate}[label=\textbf{F\arabic*}]
-  \item Kleinste Dateneinheit mit genau zwei Werten:
-        1/0, Ein/Aus, Ja/Nein, Wahr/Falsch.
-  \item Einstellig: ein Operand (\texttt{not}, Negation $-x$).
-        Zweistellig: zwei Operanden (\texttt{and}, \texttt{or}, $+$, $\cap$).
-  \item $T \text{ and } \underline{\text{not } F} \text{ or } F
-         = \underline{T \text{ and } T} \text{ or } F = T \text{ or } F = \mathbf{T}$
-  \item $F \text{ or } \underline{\text{not } F} \text{ and } F
-         = F \text{ or } \underline{T \text{ and } F} = F \text{ or } F = \mathbf{F}$
-  \item $\text{not}(T \text{ and } (F \text{ or } T)) \text{ or } F
-         = \text{not}(T \text{ and } T) \text{ or } F = F \text{ or } F = \mathbf{F}$
-  \item \texttt{True + True} $= 2$ (True zählt als 1), \texttt{bool(0)} $=$ \texttt{False}.
-  \item $23\,/\!/\,4 = 5$, \; $23 \,\%\, 4 = 3$ (Kontrolle: $5 \cdot 4 + 3 = 23$),
-        \; $-7\,/\!/\,2 = -4$ (abrunden).
-  \item $100, 50, 25, 12, 6, 3, 1 \to$ Reste $0,0,1,0,0,1,1$
-        $\Rightarrow (100)_2 = 1100100$ \;($64 + 32 + 4$).
-  \item $32 + 8 + 4 + 1 = 45$.
-  \item $100x = 123.\overline{3}$, \; $10x = 12.\overline{3}$
-        $\Rightarrow 90x = 111 \Rightarrow x = \frac{111}{90} = \frac{37}{30}$.
-  \item $0.375 \to 0.75\,(0) \to 1.5\,(1) \to 1.0\,(1)$: $(0.375)_2 = 0.011$.\\
-        $0.1 \to 0.2\,(0) \to 0.4\,(0) \to 0.8\,(0) \to 1.6\,(1) \to 1.2\,(1) \to 0.4 \ldots$:
-        $(0.1)_2 = 0.0\overline{0011}$.
-  \item $0.1$, $0.7$, $0.9$ sind binär periodisch, also nicht exakt speicherbar.
-        Durch das Runden ist $0.7 + 0.1 = 0.7999\ldots$, aber $0.9 - 0.1 = 0.8$.
-  \item $6.5 = 110.1_2 = 1.101 \cdot 2^2$; \; $s = 1$, $e = 2 + 127 = 129 = 10000001_2$:\\
-        \texttt{1 10000001 10100000000000000000000}
-  \item Nach dem Normalisieren steht vor dem Komma \textbf{immer} eine 1.
-        Sie muss nicht gespeichert werden, so gewinnt man ein Bit Genauigkeit.
-  \item $2^5 = 32$.
-  \item $A \cap B = \{3,4\}$, \; $A \cup B = \{1,2,3,4,5\}$, \;
-        $A \setminus B = \{1,2\}$, \; $B \setminus A = \{5\}$, \;
-        $\overline{A} = \{5,6\}$.
-  \item Ja (Mengen ignorieren Wiederholung). Nein (Liste zählt Wiederholung).
-        Nein (Liste ist geordnet).
-  \item $(2,-2,6) - (1,1,1) = (1,-3,5)$.
-  \item $1 \times 1$, $3 \times 1$ und $1 \times 4$. \; $4 \times 1$ geht
-        \textbf{nicht}, weil die Zeilenzahl (4 statt 3) nicht passt.
-  \item Nein: Zu jedem $x > 0$ gibt es \textbf{zwei} Outputs, eine Funktion
-        verlangt genau einen.
-  \item \texttt{'110'}. Für \texttt{0} läuft die Schleife nie, also kommt die
-        leere Zeichenkette \texttt{''} zurück (richtig wäre \texttt{'0'}).
+  \item $2^4 = 16$.
+  \item $T \text{ and } \underline{\text{not } F} \text{ or } F \text{ and } T
+        = \underline{T \text{ and } T} \text{ or } \underline{F \text{ and } T}
+        = T \text{ or } F = \mathbf{T}$
+  \item $\text{not}(\underline{T \text{ or } F}) \text{ or not}(\underline{T \text{ and } T})
+        = \text{not } T \text{ or not } T = F \text{ or } F = \mathbf{F}$
+  \item \texttt{(not a) or (b and c)}
+  \item $29 /\!/ 4 = 7$, \; $29 \% 4 = 1$, \; $-29 /\!/ 4 = -8$, \; $-29 \% 4 = 3$
+        (Kontrolle: $-8 \cdot 4 + 3 = -29$).
+  \item $200 - 128 = 72$, $72 - 64 = 8$, $8 - 8 = 0$ $\Rightarrow (200)_2 = 11001000$.
+  \item Das letzte Bit ist 0.
+  \item $0.\overline{45} = \frac{45}{99} = \frac{5}{11}$; \;
+        $0.1\overline{6} = \frac{16 - 1}{90} = \frac{15}{90} = \frac16$.
+  \item $\frac38$ endlich, $\frac15$ periodisch, $0.45 = \frac{9}{20}$ periodisch
+        (Nenner enthält 5), $0.75 = \frac34$ endlich.
+  \item $0.45 \to 0.9\,(\mathbf0) \to 1.8\,(\mathbf1) \to 1.6\,(\mathbf1) \to 1.2\,(\mathbf1)
+        \to 0.4\,(\mathbf0) \to 0.8\,(\mathbf0) \to 1.6 \ldots$ (wieder da) \\
+        $\Rightarrow (0.45)_2 = 0.01\overline{1100}$
+  \item $s = 0$, $k = 129 - 127 = 2$, $1.01_2 \cdot 2^2 = 101_2 = \mathbf{5}$.
+  \item $2.75 = 10.11_2 = 1.011 \cdot 2^1$, $e = 128 = 10000000_2$:
+        \texttt{1 10000000 01100000000000000000000}
+  \item $A \cap B = \{c\}$, \; $A \cup B = \{a,b,c,d\}$, \; $A \setminus B = \{a,b\}$, \;
+        $\overline{A \cup B} = \{e,f\}$.
+  \item \texttt{101} $\to \{x, z\}$. Genau 2 Elemente: $\{x,y\}, \{x,z\}, \{y,z\}$, also 3.
+  \item $a_3 = 7$ (Zählung ab 1), \texttt{a[3]} $= 2$ (Zählung ab 0).
+  \item $(2\times3)+(3\times1)$: \textbf{nein} (Zeilen 2 und 3 passen nicht);
+        $(2\times3)+(1\times3)$: ja; \; $(2\times3)+(2\times1)$: ja.
+  \item (a) ja, die Matrikelnummer ist eindeutig; (b) nein, mehrere Studierende können
+        gleich heissen; (c) ja, jede Person hat einen Vornamen.
+  \item $x$: $10 \to 5 \to 2 \to 1 \to 0$, Reste $0, 1, 0, 1$,
+        \texttt{y}: \texttt{'0'}, \texttt{'10'}, \texttt{'010'}, \texttt{'1010'}.
+  \item $\underline{\text{not } F} \text{ and } (\underline{T \text{ or } F}) \text{ and not}(F \text{ or } \underline{\text{not } F})
+        = T \text{ and } T \text{ and not}(\underline{F \text{ or } T})
+        = T \text{ and } T \text{ and } F = \mathbf{F}$
+  \item $100x = 327.\overline{7}$, $10x = 32.\overline{7}$ $\Rightarrow 90x = 295
+        \Rightarrow x = \frac{295}{90} = \frac{59}{18}$.
+  \item $0.375 = 0.011_2 = 1.1 \cdot 2^{-2}$, \; $e = -2 + 1023 = 1021 = 01111111101_2$:\\
+        \texttt{0 01111111101 1000\ldots0} (nach der 1 nur Nullen, 52 Bit)
+  \item $\begin{pmatrix}1&0\\0&1\end{pmatrix} + \begin{pmatrix}3&6\\0&-1\end{pmatrix}
+        = \begin{pmatrix}4&6\\0&0\end{pmatrix}$ \; (Punkt vor Strich; die Spalte wird nach rechts kopiert).
+  \item Die 1 ist fest drin, für die übrigen 5 Elemente gibt es je 2 Möglichkeiten: $2^5 = 32$.
 \end{enumerate}
 
 \section{Offene Fragen}
