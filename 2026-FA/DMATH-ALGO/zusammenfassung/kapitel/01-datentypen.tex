@@ -222,34 +222,77 @@ es zwei Operatoren.
   Kontrolle: $-4 \cdot 5 + 3 = -17$.
 \end{fehler}
 
-\subsection*{Dezimal $\to$ binär: zwei Wege}
-\begin{minipage}[t]{0.48\linewidth}
-  \textbf{Weg A: durch 2 teilen}\\[2pt]
-  Rest notieren, mit dem Ergebnis weiter, bis 0. Reste \textbf{von unten} lesen.\\[4pt]
-  \begin{tabular}{r@{\;:\;2 = \;}r@{\;\;Rest\;}l}
-    157 & 78 & \textbf{1} \\ 78 & 39 & \textbf{0} \\ 39 & 19 & \textbf{1} \\
-    19 & 9 & \textbf{1} \\ 9 & 4 & \textbf{1} \\ 4 & 2 & \textbf{0} \\
-    2 & 1 & \textbf{0} \\ 1 & 0 & \textbf{1} \;$\uparrow$
-  \end{tabular}
+\subsection*{Dezimal $\to$ binär: durch 2 teilen}
+Die Zahl immer wieder durch 2 teilen und den Rest (0 oder 1) notieren. Mit dem
+Ergebnis von \texttt{//} weiterrechnen, bis 0 herauskommt. Am Schluss die Reste
+\textbf{von unten nach oben} lesen.
+
+\newcommand{\rest}[1]{\textcolor{pruefFarbe}{\ensuremath{\mathbf{#1}}}}
+\begin{minipage}[t]{0.55\linewidth}
+  \textbf{Ausführlich} (zum Verstehen)\\[4pt]
+  $\begin{array}{r@{\;=\;}r@{\,\cdot\,2\;+\;}l}
+    157 & 78 & \rest1 \\
+    78 & 39 & \rest0 \\
+    39 & 19 & \rest1 \\
+    19 & 9 & \rest1 \\
+    9 & 4 & \rest1 \\
+    4 & 2 & \rest0 \\
+    2 & 1 & \rest0 \\
+    1 & 0 & \rest1
+  \end{array}$
 \end{minipage}\hfill
-\begin{minipage}[t]{0.48\linewidth}
-  \textbf{Weg B: Zweierpotenzen abziehen}\\[2pt]
-  Grösste passende Potenz abziehen, an dieser Stelle eine 1 setzen.\\[4pt]
-  $157 - 128 = 29$\\ $29 - 16 = 13$\\ $13 - 8 = 5$\\ $5 - 4 = 1$\\ $1 - 1 = 0$\\[4pt]
-  \begin{tabular}{*{8}{c}}
-    128 & 64 & 32 & 16 & 8 & 4 & 2 & 1 \\ \midrule
-    1 & 0 & 0 & 1 & 1 & 1 & 0 & 1
-  \end{tabular}
+\begin{minipage}[t]{0.4\linewidth}
+  \textbf{Prüfungsweg} (schnell)\\[4pt]
+  \begin{tikzpicture}[baseline=(p-1-1.base)]
+    \matrix (p) [matrix of math nodes, ampersand replacement=\&, row sep=1.5pt,
+                 column sep=12pt, nodes={inner sep=1.5pt},
+                 column 1/.style={anchor=base east}] {
+      x \& \%\,2 \\
+      157 \& \rest1 \\ 78 \& \rest0 \\ 39 \& \rest1 \\ 19 \& \rest1 \\
+      9 \& \rest1 \\ 4 \& \rest0 \\ 2 \& \rest0 \\ 1 \& \rest1 \\
+    };
+    \coordinate (v) at ($(p-2-1.east)!0.5!(p-2-2.west)$);
+    \draw (v |- p-1-1.north) -- (v |- p-9-1.south);
+    \draw (p-1-1.south -| p.west) -- (p-1-2.south -| p.east);
+    \draw[pruefFarbe, -{Latex[length=5pt]}, thick]
+      ([xshift=6pt]p-9-2.base -| p.east) -- ([xshift=6pt]p-2-2.north -| p.east)
+      node[midway, right, font=\scriptsize, align=left] {von\\unten\\lesen};
+  \end{tikzpicture}\\[4pt]
+  Links: die Zahl halbieren (abrunden).\\
+  Rechts: gerade $\to$ 0, ungerade $\to$ 1.
 \end{minipage}
 
 \[
   (157)_2 = \mathbf{10011101}
 \]
 
+\subsection*{Binär $\to$ dezimal: Stellen nummerieren}
+Unter jedes Bit den \textbf{Exponenten} schreiben, von \textbf{rechts mit 0} beginnend.
+Dann für jede \textbf{1} die Zweierpotenz $2^{\text{Exponent}}$ addieren. Die Nullen
+fallen weg.
+
+\begin{beispiel}{$10011101_2$ zurück ins Dezimalsystem}
+  \begin{center}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{r*{8}{c}}
+      Bit & $\rest1$ & $\rest0$ & $\rest0$ & $\rest1$ & $\rest1$ & $\rest1$ & $\rest0$ & $\rest1$ \\
+      \textcolor{hsluBlau}{Exponent} & \textcolor{hsluBlau}{7} & \textcolor{hsluBlau}{6} &
+      \textcolor{hsluBlau}{5} & \textcolor{hsluBlau}{4} & \textcolor{hsluBlau}{3} &
+      \textcolor{hsluBlau}{2} & \textcolor{hsluBlau}{1} & \textcolor{hsluBlau}{0}
+    \end{tabular}
+  \end{center}
+  \[
+    2^0 + 2^2 + 2^3 + 2^4 + 2^7 = 1 + 4 + 8 + 16 + 128 = \mathbf{157} \;\checkmark
+  \]
+  Damit ist auch die Umrechnung oben kontrolliert.
+\end{beispiel}
+
 \begin{merke}
   \begin{itemize}[nosep]
-    \item Weg A ist ein sturer Ablauf und eignet sich für grosse Zahlen. Weg B ist bei
-          kleinen Zahlen schneller und dient gleichzeitig als Kontrolle.
+    \item Der Exponent links ist immer (Anzahl Bits $- 1$). Bei 8 Bit beginnt man also
+          bei 7, bei 9 Bit bei 8.
+    \item Die zwei Wege sind Gegenstücke. Nach jeder Umrechnung kontrolliert man
+          mit der Gegenrichtung.
     \item Das \textbf{letzte Bit} ist $x \,\%\, 2$: gerade Zahlen enden auf 0, ungerade auf 1.
     \item Ein Bit nach links schieben (eine 0 anhängen) heisst mal 2:
           $101_2 = 5$, \; $1010_2 = 10$.
@@ -284,7 +327,8 @@ Zahlen mit auffälligen Mustern:
 \begin{minicheck}
   \begin{enumerate}[resume*=fragen01]
     \item Berechne $29 \,/\!/\, 4$, \; $29 \,\%\, 4$, \; $-29 \,/\!/\, 4$, \; $-29 \,\%\, 4$.
-    \item Bestimme $(200)_2$ mit beiden Wegen.
+    \item Bestimme $(200)_2$ mit dem Prüfungsweg und kontrolliere durch Stellen nummerieren.
+    \item Welche Dezimalzahl ist $101101_2$?
     \item Woran sieht man ohne Rechnen, dass $11001000_2$ gerade ist?
   \end{enumerate}
 \end{minicheck}
@@ -740,7 +784,7 @@ gemacht, danach rechnet man komponentenweise.
   Die Funktion sagt \emph{was} herauskommt, der Algorithmus \emph{wie}.
 \end{merke}
 
-\begin{beispiel}{Weg A aus der Integer-Umrechnung als Python-Funktion}
+\begin{beispiel}{Der Prüfungsweg aus der Integer-Umrechnung als Python-Funktion}
 \begin{lstlisting}[language=Python]
 def decToBin(x):
     y = ''
@@ -819,7 +863,11 @@ durchrechnen.
   \item \texttt{(not a) or (b and c)}
   \item $29 /\!/ 4 = 7$, \; $29 \% 4 = 1$, \; $-29 /\!/ 4 = -8$, \; $-29 \% 4 = 3$
         (Kontrolle: $-8 \cdot 4 + 3 = -29$).
-  \item $200 - 128 = 72$, $72 - 64 = 8$, $8 - 8 = 0$ $\Rightarrow (200)_2 = 11001000$.
+  \item $200, 100, 50, 25, 12, 6, 3, 1$ mit $\%\,2$: $0,0,0,1,0,0,1,1$. Von unten gelesen
+        ist $(200)_2 = 11001000$.
+        Kontrolle mit den Exponenten $7, 6, 3$: $128 + 64 + 8 = 200$.
+  \item Exponenten $5\,4\,3\,2\,1\,0$ unter $1\,0\,1\,1\,0\,1$: $2^5 + 2^3 + 2^2 + 2^0
+        = 32 + 8 + 4 + 1 = 45$.
   \item Das letzte Bit ist 0.
   \item $0.\overline{45} = \frac{45}{99} = \frac{5}{11}$; \;
         $0.1\overline{6} = \frac{16 - 1}{90} = \frac{15}{90} = \frac16$.
