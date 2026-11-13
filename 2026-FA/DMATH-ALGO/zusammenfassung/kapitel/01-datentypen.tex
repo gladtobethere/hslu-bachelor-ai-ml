@@ -289,13 +289,39 @@ fallen weg.
 
 \begin{merke}
   \begin{itemize}[nosep]
-    \item Der Exponent links ist immer (Anzahl Bits $- 1$). Bei 8 Bit beginnt man also
-          bei 7, bei 9 Bit bei 8.
-    \item Die zwei Wege sind Gegenstücke. Nach jeder Umrechnung kontrolliert man
-          mit der Gegenrichtung.
-    \item Das \textbf{letzte Bit} ist $x \,\%\, 2$: gerade Zahlen enden auf 0, ungerade auf 1.
-    \item Ein Bit nach links schieben (eine 0 anhängen) heisst mal 2:
-          $101_2 = 5$, \; $1010_2 = 10$.
+    \item \textbf{Der Exponent ganz links ist (Anzahl Bits $- 1$).}
+      \begin{itemize}[nosep]
+        \item Man zählt von rechts ab 0, nicht ab 1. Darum ist die linke Stelle
+              um eins kleiner als die Anzahl Bits.
+        \item $10011101_2$ hat 8 Bits $\Rightarrow$ Exponenten $7, 6, \ldots, 0$.
+        \item So muss man die Stellen nicht abzählen: Bits zählen, minus 1, fertig.
+      \end{itemize}
+    \item \textbf{Die zwei Wege sind Gegenstücke.}
+      \begin{itemize}[nosep]
+        \item Dezimal $\to$ binär: durch 2 teilen, Reste notieren.
+        \item Binär $\to$ dezimal: Zweierpotenzen der Einsen addieren.
+        \item Kontrolle: das Ergebnis mit dem anderen Weg zurückrechnen. Kommt die
+              Startzahl heraus (hier $157 \to 10011101_2 \to 157$), stimmt es.
+      \end{itemize}
+    \item \textbf{Das letzte Bit (ganz rechts) verrät, ob die Zahl gerade ist.}
+      \begin{itemize}[nosep]
+        \item Das letzte Bit hat den Exponenten 0, also den Wert $2^0 = 1$.
+        \item Alle anderen Stellen sind $2, 4, 8, 16, \ldots$ wert, also gerade.
+              Ihre Summe ist immer gerade.
+        \item Ob die Zahl gerade oder ungerade ist, entscheidet darum nur das letzte Bit:
+              letztes Bit 0 $\Rightarrow$ gerade, letztes Bit 1 $\Rightarrow$ ungerade.
+        \item Beispiel: $6 = 110_2$ (gerade, endet auf 0), \; $7 = 111_2$ (ungerade, endet auf 1).
+        \item Das ist genau der \textbf{erste Rest} im Prüfungsweg, also $x \,\%\, 2$:
+              $157 \,\%\, 2 = 1$, und $10011101_2$ endet auf 1.
+      \end{itemize}
+    \item \textbf{Eine 0 hinten anhängen heisst mal 2.}
+      \begin{itemize}[nosep]
+        \item Jedes Bit rutscht eine Stelle nach links. Sein Exponent wird um 1 grösser,
+              sein Wert verdoppelt sich.
+        \item $101_2 = 4 + 1 = 5$, \; $1010_2 = 8 + 2 = 10$.
+        \item Gleich wie im Dezimalsystem: dort heisst eine 0 anhängen mal 10
+              ($5 \to 50$).
+      \end{itemize}
   \end{itemize}
 \end{merke}
 
